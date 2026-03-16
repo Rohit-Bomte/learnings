@@ -1,0 +1,10 @@
+# Standard gitignore for Python/Node/Others
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.ipynb_checkpoints/
+node_modules/
+.DS_Store
+*.log
