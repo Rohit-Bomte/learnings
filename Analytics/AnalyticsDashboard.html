@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexGen Analytics Dashboard | SQL Insights</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0b10;
+            --card-glass: rgba(255, 255, 255, 0.03);
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --code-bg: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 80px;
+            padding: 60px 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            background: linear-gradient(to right, #fff, var(--text-dim));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .query-section {
+            margin-bottom: 60px;
+            animation: fadeIn 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-glass);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            transition: transform 0.3s ease, border 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 24px;
+            background: var(--accent-blue);
+            border-radius: 2px;
+        }
+
+        .description {
+            color: var(--text-dim);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .code-container {
+            position: relative;
+            background: var(--code-bg);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0,0,0,0.5);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            color: #d1d5db;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+        }
+
+        .tag-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .use-case {
+            background: rgba(139, 92, 246, 0.05);
+            padding: 20px;
+            border-radius: 16px;
+            border-left: 4px solid var(--accent-purple);
+        }
+
+        .use-case h4 {
+            color: var(--accent-purple);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 0;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .accent-gradient {
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            height: 2px;
+            width: 100px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="subtitle">Data Strategy</div>
+            <h1>NexGen SQL Analytics</h1>
+            <div class="accent-gradient"></div>
+            <p>High-efficiency queries for complex ecommerce behavior analysis.</p>
+        </header>
+
+        <section class="query-section" style="animation-delay: 0.1s;">
+            <div class="card">
+                <div class="tag-group">
+                    <span class="tag">WINDOW FUNCTIONS</span>
+                    <span class="tag">7-DAY ATTRIBUTION</span>
+                    <span class="tag">OPTIMIZED JOIN</span>
+                </div>
+                <h2>Funnel Conversion: View to Cart</h2>
+                <p class="description">Tracks users who transitioned from viewing a product to adding it to their cart within 7 days, segmented by country, gender, and age cohorts.</p>
+                <div class="code-container">
+                    <code>WITH product_views AS (
+    SELECT distinct_id, timestamp AS view_time, JSON_EXTRACT_SCALAR(properties, '$.product_id') AS product_id
+    FROM `project.dataset.events`
+    WHERE event_name = 'Product Viewed'
+),
+product_adds AS (
+    SELECT distinct_id, timestamp AS add_time, JSON_EXTRACT_SCALAR(properties, '$.product_id') AS product_id
+    FROM `project.dataset.events`
+    WHERE event_name = 'Product Added'
+),
+joined_funnel AS (
+    SELECT v.distinct_id, v.product_id, v.view_time, MIN(a.add_time) AS first_add_after_view
+    FROM product_views v
+    LEFT JOIN product_adds a ON v.distinct_id = a.distinct_id 
+        AND v.product_id = a.product_id
+        AND a.add_time BETWEEN v.view_time AND TIMESTAMP_ADD(v.view_time, INTERVAL 7 DAY)
+    GROUP BY 1, 2, 3
+)
+SELECT u.country, u.gender, 
+    CASE WHEN u.age < 18 THEN 'Under 18' WHEN u.age BETWEEN 18 AND 35 THEN '18-35' ELSE 'Over 35' END AS age_group,
+    COUNT(DISTINCT f.distinct_id) AS views,
+    COUNT(DISTINCT CASE WHEN f.first_add_after_view IS NOT NULL THEN f.distinct_id END) AS additions
+FROM joined_funnel f
+JOIN `project.dataset.users` u ON f.distinct_id = u.distinct_id
+GROUP BY 1, 2, 3;</code>
+                </div>
+                <div class="use-case">
+                    <h4>Industry Perspective</h4>
+                    Critical for identifying friction in the user journey. By segmenting by age and country, brands can tailor UI experiences specifically for underperforming demographics.
+                </div>
+            </div>
+        </section>
+
+        <section class="query-section" style="animation-delay: 0.3s;">
+            <div class="card">
+                <div class="tag-group">
+                    <span class="tag">COHORT ANALYSIS</span>
+                    <span class="tag">30-DAY RETENTION</span>
+                </div>
+                <h2>Repeat Purchase (Retention)</h2>
+                <p class="description">Identifies if a new customer returns for a second purchase within their first 30 days. Uses first-touch attribution logic.</p>
+                <div class="code-container">
+                    <code>WITH first_purchases AS (
+    SELECT distinct_id, MIN(timestamp) AS first_purchase_time
+    FROM `project.dataset.events`
+    WHERE event_name = 'Order Completed'
+    GROUP BY 1
+),
+subsequent_actions AS (
+    SELECT e.distinct_id, e.timestamp AS return_time
+    FROM `project.dataset.events` e
+    JOIN first_purchases f ON e.distinct_id = f.distinct_id
+    WHERE e.timestamp > f.first_purchase_time
+    AND e.timestamp <= TIMESTAMP_ADD(f.first_purchase_time, INTERVAL 30 DAY)
+)
+SELECT FORMAT_TIMESTAMP('%Y-%m', f.first_purchase_time) AS cohort,
+    u.country, COUNT(DISTINCT f.distinct_id) AS base_users,
+    COUNT(DISTINCT s.distinct_id) AS retained_users
+FROM first_purchases f
+LEFT JOIN subsequent_actions s ON f.distinct_id = s.distinct_id
+JOIN `project.dataset.users` u ON f.distinct_id = u.distinct_id
+GROUP BY 1, 2;</code>
+                </div>
+                <div class="use-case">
+                    <h4>Industry Perspective</h4>
+                    The "Life Blood" metric for DTC brands. High CAC (Customer Acquisition Cost) requires high retention for profitability. This query identifies "Golden Cohorts" for targeted marketing.
+                </div>
+            </div>
+        </section>
+
+        <section class="query-section" style="animation-delay: 0.5s;">
+            <div class="card">
+                <div class="tag-group">
+                    <span class="tag">BASKET ANALYSIS</span>
+                    <span class="tag">PRODUCT AFFINITY</span>
+                </div>
+                <h2>Product Affinity Analysis</h2>
+                <p class="description">Calculates the frequency of product pairings within the same order to power recommendation engines like 'Users also bought'.</p>
+                <div class="code-container">
+                    <code>WITH order_items AS (
+    SELECT JSON_EXTRACT_SCALAR(properties, '$.order_id') AS order_id,
+           JSON_EXTRACT_SCALAR(properties, '$.product_name') AS p_name
+    FROM `project.dataset.events`
+    WHERE event_name = 'Order Completed'
+)
+SELECT a.p_name AS prod_a, b.p_name AS prod_b, COUNT(*) AS pair_frequency
+FROM order_items a
+JOIN order_items b ON a.order_id = b.order_id AND a.p_name < b.p_name
+GROUP BY 1, 2
+HAVING pair_frequency > 5
+ORDER BY pair_frequency DESC;</code>
+                </div>
+                <div class="use-case">
+                    <h4>Industry Perspective</h4>
+                    Directly influences AOV (Average Order Value). By knowing what pairs well, merchandisers can bundle products or trigger dynamic cross-sell popups for higher revenue.
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            Built with Antigravity AI Engine &bull; Pure SQL Excellence &bull; 2026
+        </footer>
+    </div>
+</body>
+</html>
