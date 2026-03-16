@@ -154,8 +154,74 @@ LIMIT 10;
 2. **Retention Analysis**: Critical for Subscription models. Predicting when a user might "churn" allows teams to send "We miss you" coupons before it's too late.
 3. **Basket Analysis**: Powers recommendation engines. Amazon's "Customers who bought this also bought..." is essentially a real-time affinity query.
 
-## Technical Optimizations Used
+---
 
-- **CTEs**: We use `WITH` clauses to break complex logic into readable steps.
-- **Left Joins + Filters**: We avoid full cross-joins. By filtering `a.add_time` within a 7-day range in the join condition (Query 1), we significantly reduce the work the database engine needs to do.
-- **Aggregation Early**: Grouping by ID early reduces the row count before joining with the heavy `users` metadata table.
+## Query 4: Attribution Rewards Logic (First vs. Last Touch)
+
+**Objective**: Determine whether the "Discovery" (First View) or the "Closer" (Final Visit) gets the reward for a product addition.
+
+```sql
+WITH user_journey AS (
+    -- Get all touchpoints for a user-product pair
+    SELECT 
+        distinct_id,
+        timestamp,
+        event_name,
+        JSON_EXTRACT_SCALAR(properties, '$.product_id') AS product_id,
+        JSON_EXTRACT_SCALAR(properties, '$.campaign_id') AS campaign_id,
+        -- Generate sequence of events
+        ROW_NUMBER() OVER(PARTITION BY distinct_id, JSON_EXTRACT_SCALAR(properties, '$.product_id') ORDER BY timestamp ASC) as first_touch_rank,
+        ROW_NUMBER() OVER(PARTITION BY distinct_id, JSON_EXTRACT_SCALAR(properties, '$.product_id') ORDER BY timestamp DESC) as last_touch_rank
+    FROM `project.dataset.events`
+    WHERE event_name IN ('Product Viewed', 'Product Added')
+),
+conversions AS (
+    -- Identify the actual "Added" event
+    SELECT * FROM user_journey WHERE event_name = 'Product Added'
+),
+first_touch_rewards AS (
+    -- Give credit to the VERY FIRST view of that product
+    SELECT 
+        c.distinct_id,
+        c.product_id,
+        j.campaign_id AS reward_recipient
+    FROM conversions c
+    JOIN user_journey j ON c.distinct_id = j.distinct_id AND c.product_id = j.product_id
+    WHERE j.first_touch_rank = 1
+),
+last_touch_rewards AS (
+    -- Give credit to the view IMMEDIATELY preceding the addition
+    SELECT 
+        c.distinct_id,
+        c.product_id,
+        j.campaign_id AS reward_recipient
+    FROM conversions c
+    JOIN user_journey j ON c.distinct_id = j.distinct_id AND c.product_id = j.product_id
+    WHERE j.event_name = 'Product Viewed'
+    AND j.timestamp < c.timestamp
+    -- Get the view with the largest timestamp before the add (rank 1 in desc order filter)
+    QUALIFY ROW_NUMBER() OVER(PARTITION BY c.distinct_id, c.product_id ORDER BY j.timestamp DESC) = 1
+)
+-- Final Comparison
+SELECT 
+    'First-Touch' as model, reward_recipient, COUNT(*) as conversion_count
+FROM first_touch_rewards GROUP BY 1, 2
+UNION ALL
+SELECT 
+    'Last-Touch' as model, reward_recipient, COUNT(*) as conversion_count
+FROM last_touch_rewards GROUP BY 1, 2;
+```
+
+---
+
+## The "Reward" Logic Explained (Attribution)
+
+When a user views a product today but only adds it 5 days later, industry experts use **Attribution Models** to decide who "wins":
+
+1.  **First-Touch**: Rewards the **Discovery**. If an Instagram Ad brought them to the site 5 days ago, Instagram gets the full reward. This is best for Brand Awareness.
+2.  **Last-Touch**: Rewards the **Closer**. If they came back via a Direct Search today, the "Direct" channel gets the reward. This is best for evaluating conversion efficiency.
+3.  **Linear**: Splits the reward. Both the Ad and the Direct visit get 50% credit.
+4.  **Time Decay**: The closer the event is to the conversion, the more reward it gets.
+
+### Which one should you use?
+In e-commerce, **Last-Touch** is the default because it's easier to track, but **First-Touch** is what marketing teams use to prove that their expensive ads are actually working in the long run.

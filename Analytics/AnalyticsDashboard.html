@@ -54,6 +54,7 @@
             font-weight: 600;
             background: linear-gradient(to right, #fff, var(--text-dim));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
@@ -290,6 +291,32 @@ ORDER BY pair_frequency DESC;</code>
                 <div class="use-case">
                     <h4>Industry Perspective</h4>
                     Directly influences AOV (Average Order Value). By knowing what pairs well, merchandisers can bundle products or trigger dynamic cross-sell popups for higher revenue.
+                </div>
+            </div>
+        </section>
+
+        <section class="query-section" style="animation-delay: 0.7s;">
+            <div class="card" style="border-color: var(--accent-purple);">
+                <div class="tag-group">
+                    <span class="tag">ATTRIBUTION</span>
+                    <span class="tag">REWARD LOGIC</span>
+                </div>
+                <h2>Attribution Rewards Logic</h2>
+                <p class="description">How do we decide which event gets the credit? This query compares First-Touch (Discovery) vs Last-Touch (Closer) logic.</p>
+                <div class="code-container">
+                    <code>WITH journey AS (
+    SELECT distinct_id, event_name, campaign_id,
+    ROW_NUMBER() OVER(PARTITION BY distinct_id ORDER BY timestamp ASC) as first_rank,
+    ROW_NUMBER() OVER(PARTITION BY distinct_id ORDER BY timestamp DESC) as last_rank
+    FROM events WHERE event_name IN ('View', 'Add')
+)
+SELECT 'First-Touch' as model, campaign_id, COUNT(*) 
+FROM journey WHERE event_name = 'Add' AND first_rank = 1
+GROUP BY 1, 2;</code>
+                </div>
+                <div class="use-case">
+                    <h4>Industry Perspective</h4>
+                    Solving the <strong>"Conversion Gap"</strong>. If a user views on Monday and buys on Friday, attribution tells you if your Monday ad worked or if the Friday email closed the deal.
                 </div>
             </div>
         </section>
