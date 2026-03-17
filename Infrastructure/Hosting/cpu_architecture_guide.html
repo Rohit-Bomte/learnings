@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CPU Architecture Explained: Cores & Hosting</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary: #6366f1;
@@ -33,7 +36,9 @@
             overflow-x: hidden;
         }
 
-        h1, h2, h3 {
+        h1,
+        h2,
+        h3 {
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
         }
@@ -143,7 +148,8 @@
             overflow: hidden;
         }
 
-        .comparison-table th, .comparison-table td {
+        .comparison-table th,
+        .comparison-table td {
             padding: 1.25rem;
             text-align: left;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -197,131 +203,234 @@
             font-weight: bold;
             text-transform: uppercase;
         }
-        .pro { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
-        .con { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        .pro {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent);
+        }
+
+        .con {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
 
         @media (max-width: 768px) {
-            header h1 { font-size: 2.5rem; }
-            .container { padding: 2rem 1rem; }
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                padding: 2rem 1rem;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <header>
-        <h1>Decoding the CPU</h1>
-        <p>A beginner's guide to Physical, Logical, and Virtual cores—and how they power your websites.</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1>Decoding the CPU</h1>
+            <p>A beginner's guide to Physical, Logical, and Virtual cores—and how they power your websites.</p>
+        </header>
 
-    <section class="analogy-box">
-        <span class="analogy-title">The Master Analogy</span>
-        <h2>Think of a Restaurant Kitchen 🍳</h2>
-        <p style="margin-top: 1.5rem; font-size: 1.1rem;">
-            Imagine you are running a restaurant. The way meals (tasks) get cooked (processed) depends on three things:
-        </p>
-        <ul style="list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
-            <li><strong>👨‍🍳 Physical Core:</strong> This is a <strong>Full-Time Chef</strong>. A real, breathing person with two hands who can cook a meal. If you have 4 physical cores, you have 4 Chefs.</li>
-            <li><strong>🔄 Logical Core:</strong> This is giving that Chef a <strong>Second Cutting Board</strong>. The Chef still only has two hands, but while the steak is searing, they can chop onions on the other board. They "look" like two chefs to the manager, but it's still just one person being more efficient.</li>
-            <li><strong>☁️ Virtual Core (vCPU):</strong> This is <strong>Renting a Burner</strong>. In a massive food court (The Cloud), you don't own the kitchen. You rent "time" on a stove. The food court management decides which Chef stands at your burner for 10 minutes to finish your order.</li>
-        </ul>
-    </section>
+        <section class="analogy-box">
+            <span class="analogy-title">The Master Analogy</span>
+            <h2>Think of a Restaurant Kitchen 🍳</h2>
+            <p style="margin-top: 1.5rem; font-size: 1.1rem;">
+                Imagine you are running a restaurant. The way meals (tasks) get cooked (processed) depends on three
+                things:
+            </p>
+            <ul style="list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+                <li><strong>👨‍🍳 Physical Core:</strong> This is a <strong>Full-Time Chef</strong>. A real, breathing
+                    person with two hands who can cook a meal. If you have 4 physical cores, you have 4 Chefs.</li>
+                <li><strong>🔄 Logical Core:</strong> This is giving that Chef a <strong>Second Cutting Board</strong>.
+                    The Chef still only has two hands, but while the steak is searing, they can chop onions on the other
+                    board. They "look" like two chefs to the manager, but it's still just one person being more
+                    efficient.</li>
+                <li><strong>☁️ Virtual Core (vCPU):</strong> This is <strong>Renting a Burner</strong>. In a massive
+                    food court (The Cloud), you don't own the kitchen. You rent "time" on a stove. The food court
+                    management decides which Chef stands at your burner for 10 minutes to finish your order.</li>
+            </ul>
+        </section>
 
-    <div class="grid">
-        <!-- Physical Cores -->
-        <article class="card">
-            <span class="origin-tag">Origin: IBM (2001)</span>
-            <h3>1. Physical Core</h3>
-            <p>The "Hardware Brain". A single physical unit on the CPU chip that reads and executes instructions.</p>
-            <div>
-                <span class="badge pro">Advantage</span>
-                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Pure, dedicated power. No sharing. Best for heavy math and video editing.</p>
-            </div>
-            <div>
-                <span class="badge con">Disadvantage</span>
-                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Expensive and generates a lot of heat. If it sits idle, money is wasted.</p>
-            </div>
-        </article>
+        <div class="grid">
+            <!-- Physical Cores -->
+            <article class="card">
+                <span class="origin-tag">Origin: IBM (2001)</span>
+                <h3>1. Physical Core</h3>
+                <p>The "Hardware Brain". A single silicone unit containing its own <strong>ALU (Arithmetic Logic
+                        Unit)</strong> and <strong>Control Unit</strong> to process data independently.
+                </p>
+                <div>
+                    <span class="badge pro">Advantage</span>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Pure, dedicated power. No sharing. Best for heavy
+                        math and video editing.</p>
+                </div>
+                <div>
+                    <span class="badge con">Disadvantage</span>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Expensive and generates a lot of heat. If it sits
+                        idle, money is wasted.</p>
+                </div>
+            </article>
 
-        <!-- Logical Cores -->
-        <article class="card">
-            <span class="origin-tag">Origin: Intel (2002)</span>
-            <h3>2. Logical Core</h3>
-            <p>Also known as <strong>Hyper-Threading</strong>. It's a trick played by hardware to make one core act like two.</p>
-            <div>
-                <span class="badge pro">Advantage</span>
-                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Boosts multi-tasking by ~30% without adding more expensive chips.</p>
-            </div>
-            <div>
-                <span class="badge con">Disadvantage</span>
-                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Not a real second core. If both "threads" need 100% effort, they slow down.</p>
-            </div>
-        </article>
+            <!-- Logical Cores -->
+            <article class="card">
+                <span class="origin-tag">Origin: Intel (2002)</span>
+                <h3>2. Logical Core</h3>
+                <p>Also known as <strong>Hyper-Threading</strong>. It's a trick played by hardware to make one core act
+                    like two.</p>
+                <div>
+                    <span class="badge pro">Advantage</span>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Boosts multi-tasking by ~30% without adding more
+                        expensive chips.</p>
+                </div>
+                <div>
+                    <span class="badge con">Disadvantage</span>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Not a real second core. If both "threads" need
+                        100% effort, they slow down.</p>
+                </div>
+            </article>
 
-        <!-- Virtual Cores -->
-        <article class="card">
-            <span class="origin-tag">Origin: VMware / AWS</span>
-            <h3>3. Virtual Core (vCPU)</h3>
-            <p>The "Cloud Unit". Used by hosting companies to slice a big server into smaller pieces for customers.</p>
-            <div>
-                <span class="badge pro">Advantage</span>
-                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Scale instantly. Pay only for what you need. Perfect for web hosting.</p>
+            <!-- Virtual Cores -->
+            <article class="card">
+                <span class="origin-tag">Origin: VMware / AWS</span>
+                <h3>3. Virtual Core (vCPU)</h3>
+                <p>The "Cloud Unit". Used by hosting companies to slice a big server into smaller pieces for customers.
+                </p>
+                <div>
+                    <span class="badge pro">Advantage</span>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Scale instantly. Pay only for what you need.
+                        Perfect for web hosting.</p>
+                </div>
+                <div>
+                    <span class="badge con">Disadvantage</span>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">"Noisy Neighbors". If other people on the same
+                        server are busy, you might slow down.</p>
+                </div>
+            </article>
+        </div>
+
+        <section style="margin-bottom: 5rem;">
+            <h2
+                style="margin-bottom: 2rem; border-bottom: 2px solid var(--primary); width: fit-content; padding-bottom: 0.5rem;">
+                Key Differences at a Glance</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Physical Core</th>
+                        <th>Virtual Core (vCPU/Logical)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Physicality</strong></td>
+                        <td>Real hardware on the CPU chip.</td>
+                        <td>Software/Logical abstraction.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Function</strong></td>
+                        <td>Executes instructions directly.</td>
+                        <td>Manages task threads (often 2 per core).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number</strong></td>
+                        <td>Fixed per processor (e.g., 8, 16).</td>
+                        <td>Higher than physical (HT/SMT enabled).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Performance</strong></td>
+                        <td>Higher; dedicated performance.</td>
+                        <td>Lower per core; shared performance.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div
+                style="background: rgba(255,255,255,0.02); padding: 2rem; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); margin-top: 2rem;">
+                <p><strong>The Linkage (Chain of Command):</strong></p>
+                <p style="margin-top: 1rem; font-family: monospace; color: var(--primary-light);">
+                    Processor Chip (Socket) <br>
+                    ↳ Contains <strong>Physical Cores</strong> (Hardware engines) <br>
+                    &nbsp;&nbsp;↳ Split into <strong>Logical Cores/Threads</strong> (Resource efficiency) <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;↳ Abstracted into <strong>vCPUs</strong> (Virtual environment units)
+                </p>
             </div>
-            <div>
-                <span class="badge con">Disadvantage</span>
-                <p style="font-size: 0.9rem; margin-top: 0.5rem;">"Noisy Neighbors". If other people on the same server are busy, you might slow down.</p>
+        </section>
+
+        <section class="analogy-box" style="margin-bottom: 5rem;">
+            <span class="analogy-title">Technical Deep Dive</span>
+            <h2>Scaling Example: The 102 Core Scenario 🚀</h2>
+            <p style="margin-top: 1.5rem;">
+                If you have a server with <strong>102 Physical Cores</strong>, the number of Virtual Cores (vCPUs)
+                depends on your configuration:
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                <div
+                    style="background: rgba(16, 185, 129, 0.05); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent);">
+                    <h4 style="color: var(--accent);">HT/SMT Enabled (Standard)</h4>
+                    <p style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0;">204 vCPUs</p>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Formula: 102 Cores × 2 Threads</p>
+                </div>
+                <div
+                    style="background: rgba(239, 68, 68, 0.05); padding: 1.5rem; border-radius: 12px; border-left: 4px solid #f87171;">
+                    <h4 style="color: #f87171;">HT/SMT Disabled</h4>
+                    <p style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0;">102 vCPUs</p>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Each core acts as one virtual core.</p>
+                </div>
             </div>
-        </article>
+            <p style="margin-top: 2rem; font-style: italic; color: var(--text-muted);">
+                <strong>Context in Virtualization:</strong> In environments like AWS or VMware, you can use
+                <strong>Over-provisioning</strong>. This means you can assign more vCPUs than you actually have (e.g., a
+                2:1 ratio) to handle bursts in traffic!
+            </p>
+        </section>
+
+        <section class="hosting-section">
+            <h2>Professional Advice: Sizing Your Client's Website</h2>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">If you are hosting a client's website, here is how
+                you guess the correct numbers:</p>
+
+            <div class="hosting-grid">
+                <div class="hosting-card">
+                    <h4>Static/Portfolio</h4>
+                    <p>Simple HTML/CSS or basic landing pages.</p>
+                    <span class="spec">1 vCPU | 1GB RAM</span>
+                    <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 1rem;">Why? Very little "thinking" needed.
+                        The server just sends files.</p>
+                </div>
+                <div class="hosting-card">
+                    <h4>Small Business (CMS)</h4>
+                    <p>WordPress hosting with 5-10 plugins.</p>
+                    <span class="spec">2 vCPU | 4GB RAM</span>
+                    <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 1rem;">Why? PHP and Databases need room to
+                        breathe when visitors click around.</p>
+                </div>
+                <div class="hosting-card">
+                    <h4>E-commerce / App</h4>
+                    <p>WooCommerce, Shopify clones, or SaaS tools.</p>
+                    <span class="spec">4+ vCPU | 8GB+ RAM</span>
+                    <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 1rem;">Why? Processing payments and
+                        searching products is heavy "Chef work".</p>
+                </div>
+            </div>
+
+            <div
+                style="margin-top: 2.5rem; padding: 1.5rem; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 1px solid var(--warning);">
+                <p style="color: var(--warning); font-weight: 600;">⚠️ The "Golden Rule" for Beginners:</p>
+                <p style="font-size: 0.95rem; margin-top: 0.5rem;">Always prioritize <strong>RAM</strong> over Cores for
+                    WordPress. A site with 1 fast core and 4GB RAM will usually run smoother than a site with 4 cores
+                    and only 1GB RAM.</p>
+            </div>
+        </section>
+
+        <footer
+            style="text-align: center; margin-top: 5rem; padding-bottom: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+            <p>Created with focus on clarity and performance. Keep your servers cool! ❄️</p>
+        </footer>
     </div>
 
-    <section style="margin-bottom: 5rem;">
-        <h2 style="margin-bottom: 2rem; border-bottom: 2px solid var(--primary); width: fit-content; padding-bottom: 0.5rem;">How They Are Linked</h2>
-        <div style="background: rgba(255,255,255,0.02); padding: 2rem; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
-            <p>The chain of command looks like this:</p>
-            <p style="margin-top: 1rem; font-family: monospace; color: var(--primary-light);">
-                Solid Processor Chip (CPU) <br>
-                ↳ Contains <strong>Physical Cores</strong> (The real hardware) <br>
-                &nbsp;&nbsp;↳ Can be split into <strong>Logical Cores</strong> (The efficiency trick) <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;↳ Shared by a Hypervisor to create <strong>Virtual Cores (vCPUs)</strong> (What you buy)
-            </p>
-        </div>
-    </section>
-
-    <section class="hosting-section">
-        <h2>Professional Advice: Sizing Your Client's Website</h2>
-        <p style="color: var(--text-muted); margin-top: 0.5rem;">If you are hosting a client's website, here is how you guess the correct numbers:</p>
-        
-        <div class="hosting-grid">
-            <div class="hosting-card">
-                <h4>Static/Portfolio</h4>
-                <p>Simple HTML/CSS or basic landing pages.</p>
-                <span class="spec">1 vCPU | 1GB RAM</span>
-                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 1rem;">Why? Very little "thinking" needed. The server just sends files.</p>
-            </div>
-            <div class="hosting-card">
-                <h4>Small Business (CMS)</h4>
-                <p>WordPress hosting with 5-10 plugins.</p>
-                <span class="spec">2 vCPU | 4GB RAM</span>
-                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 1rem;">Why? PHP and Databases need room to breathe when visitors click around.</p>
-            </div>
-            <div class="hosting-card">
-                <h4>E-commerce / App</h4>
-                <p>WooCommerce, Shopify clones, or SaaS tools.</p>
-                <span class="spec">4+ vCPU | 8GB+ RAM</span>
-                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 1rem;">Why? Processing payments and searching products is heavy "Chef work".</p>
-            </div>
-        </div>
-
-        <div style="margin-top: 2.5rem; padding: 1.5rem; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 1px solid var(--warning);">
-            <p style="color: var(--warning); font-weight: 600;">⚠️ The "Golden Rule" for Beginners:</p>
-            <p style="font-size: 0.95rem; margin-top: 0.5rem;">Always prioritize <strong>RAM</strong> over Cores for WordPress. A site with 1 fast core and 4GB RAM will usually run smoother than a site with 4 cores and only 1GB RAM.</p>
-        </div>
-    </section>
-
-    <footer style="text-align: center; margin-top: 5rem; padding-bottom: 2rem; color: var(--text-muted); font-size: 0.9rem;">
-        <p>Created with focus on clarity and performance. Keep your servers cool! ❄️</p>
-    </footer>
-</div>
-
 </body>
+
 </html>
