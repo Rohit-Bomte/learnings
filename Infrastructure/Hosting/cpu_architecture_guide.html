@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Architecture Explained: Cores & Hosting</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 5rem;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #fff 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        header p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Hero Analogy Section */
+        .analogy-box {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 4rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .analogy-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .analogy-title {
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Core Sections */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            color: var(--primary-light);
+        }
+
+        .origin-tag {
+            font-size: 0.8rem;
+            background: rgba(99, 102, 241, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            width: fit-content;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 3rem 0;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .comparison-table th {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Hosting Section */
+        .hosting-section {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border-radius: 24px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hosting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .hosting-card {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .hosting-card h4 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .spec {
+            font-weight: 700;
+            color: white;
+            display: block;
+            margin-top: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .pro { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
+        .con { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.5rem; }
+            .container { padding: 2rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Decoding the CPU</h1>
+        <p>A beginner's guide to Physical, Logical, and Virtual cores—and how they power your websites.</p>
+    </header>
+
+    <section class="analogy-box">
+        <span class="analogy-title">The Master Analogy</span>
+        <h2>Think of a Restaurant Kitchen 🍳</h2>
+        <p style="margin-top: 1.5rem; font-size: 1.1rem;">
+            Imagine you are running a restaurant. The way meals (tasks) get cooked (processed) depends on three things:
+        </p>
+        <ul style="list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+            <li><strong>👨‍🍳 Physical Core:</strong> This is a <strong>Full-Time Chef</strong>. A real, breathing person with two hands who can cook a meal. If you have 4 physical cores, you have 4 Chefs.</li>
+            <li><strong>🔄 Logical Core:</strong> This is giving that Chef a <strong>Second Cutting Board</strong>. The Chef still only has two hands, but while the steak is searing, they can chop onions on the other board. They "look" like two chefs to the manager, but it's still just one person being more efficient.</li>
+            <li><strong>☁️ Virtual Core (vCPU):</strong> This is <strong>Renting a Burner</strong>. In a massive food court (The Cloud), you don't own the kitchen. You rent "time" on a stove. The food court management decides which Chef stands at your burner for 10 minutes to finish your order.</li>
+        </ul>
+    </section>
+
+    <div class="grid">
+        <!-- Physical Cores -->
+        <article class="card">
+            <span class="origin-tag">Origin: IBM (2001)</span>
+            <h3>1. Physical Core</h3>
+            <p>The "Hardware Brain". A single physical unit on the CPU chip that reads and executes instructions.</p>
+            <div>
+                <span class="badge pro">Advantage</span>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Pure, dedicated power. No sharing. Best for heavy math and video editing.</p>
+            </div>
+            <div>
+                <span class="badge con">Disadvantage</span>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Expensive and generates a lot of heat. If it sits idle, money is wasted.</p>
+            </div>
+        </article>
+
+        <!-- Logical Cores -->
+        <article class="card">
+            <span class="origin-tag">Origin: Intel (2002)</span>
+            <h3>2. Logical Core</h3>
+            <p>Also known as <strong>Hyper-Threading</strong>. It's a trick played by hardware to make one core act like two.</p>
+            <div>
+                <span class="badge pro">Advantage</span>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Boosts multi-tasking by ~30% without adding more expensive chips.</p>
+            </div>
+            <div>
+                <span class="badge con">Disadvantage</span>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Not a real second core. If both "threads" need 100% effort, they slow down.</p>
+            </div>
+        </article>
+
+        <!-- Virtual Cores -->
+        <article class="card">
+            <span class="origin-tag">Origin: VMware / AWS</span>
+            <h3>3. Virtual Core (vCPU)</h3>
+            <p>The "Cloud Unit". Used by hosting companies to slice a big server into smaller pieces for customers.</p>
+            <div>
+                <span class="badge pro">Advantage</span>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Scale instantly. Pay only for what you need. Perfect for web hosting.</p>
+            </div>
+            <div>
+                <span class="badge con">Disadvantage</span>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">"Noisy Neighbors". If other people on the same server are busy, you might slow down.</p>
+            </div>
+        </article>
+    </div>
+
+    <section style="margin-bottom: 5rem;">
+        <h2 style="margin-bottom: 2rem; border-bottom: 2px solid var(--primary); width: fit-content; padding-bottom: 0.5rem;">How They Are Linked</h2>
+        <div style="background: rgba(255,255,255,0.02); padding: 2rem; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
+            <p>The chain of command looks like this:</p>
+            <p style="margin-top: 1rem; font-family: monospace; color: var(--primary-light);">
+                Solid Processor Chip (CPU) <br>
+                ↳ Contains <strong>Physical Cores</strong> (The real hardware) <br>
+                &nbsp;&nbsp;↳ Can be split into <strong>Logical Cores</strong> (The efficiency trick) <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;↳ Shared by a Hypervisor to create <strong>Virtual Cores (vCPUs)</strong> (What you buy)
+            </p>
+        </div>
+    </section>
+
+    <section class="hosting-section">
+        <h2>Professional Advice: Sizing Your Client's Website</h2>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">If you are hosting a client's website, here is how you guess the correct numbers:</p>
+        
+        <div class="hosting-grid">
+            <div class="hosting-card">
+                <h4>Static/Portfolio</h4>
+                <p>Simple HTML/CSS or basic landing pages.</p>
+                <span class="spec">1 vCPU | 1GB RAM</span>
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 1rem;">Why? Very little "thinking" needed. The server just sends files.</p>
+            </div>
+            <div class="hosting-card">
+                <h4>Small Business (CMS)</h4>
+                <p>WordPress hosting with 5-10 plugins.</p>
+                <span class="spec">2 vCPU | 4GB RAM</span>
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 1rem;">Why? PHP and Databases need room to breathe when visitors click around.</p>
+            </div>
+            <div class="hosting-card">
+                <h4>E-commerce / App</h4>
+                <p>WooCommerce, Shopify clones, or SaaS tools.</p>
+                <span class="spec">4+ vCPU | 8GB+ RAM</span>
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 1rem;">Why? Processing payments and searching products is heavy "Chef work".</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 2.5rem; padding: 1.5rem; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 1px solid var(--warning);">
+            <p style="color: var(--warning); font-weight: 600;">⚠️ The "Golden Rule" for Beginners:</p>
+            <p style="font-size: 0.95rem; margin-top: 0.5rem;">Always prioritize <strong>RAM</strong> over Cores for WordPress. A site with 1 fast core and 4GB RAM will usually run smoother than a site with 4 cores and only 1GB RAM.</p>
+        </div>
+    </section>
+
+    <footer style="text-align: center; margin-top: 5rem; padding-bottom: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+        <p>Created with focus on clarity and performance. Keep your servers cool! ❄️</p>
+    </footer>
+</div>
+
+</body>
+</html>
