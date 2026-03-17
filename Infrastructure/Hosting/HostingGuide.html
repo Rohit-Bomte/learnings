@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hosting Resource Architecture Guide</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0c10;
+            --accent-primary: #00f2fe;
+            --accent-secondary: #4facfe;
+            --accent-glow: rgba(79, 172, 254, 0.4);
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --neon-pink: #ff007a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background: var(--bg-deep);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(79, 172, 254, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 0, 122, 0.05) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 6rem;
+            position: relative;
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 300px;
+            background: radial-gradient(var(--accent-glow), transparent 70%);
+            z-index: -1;
+            filter: blur(60px);
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Bento Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .span-12 { grid-column: span 12; }
+        .span-8 { grid-column: span 8; }
+        .span-4 { grid-column: span 4; }
+        .span-6 { grid-column: span 6; }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(79, 172, 254, 0.1);
+            color: var(--accent-primary);
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .accent-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            box-shadow: 0 0 10px var(--accent-primary);
+        }
+
+        .card p {
+            color: var(--text-dim);
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        /* Unique Table Component */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin-top: 1.5rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--text-dim);
+            font-weight: 400;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 1.25rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        td:first-child { border-left: 1px solid var(--glass-border); border-radius: 12px 0 0 12px; font-weight: 600; color: #fff;}
+        td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; color: var(--accent-primary); font-weight: 700;}
+
+        /* Analogy Section */
+        .analogy-box {
+            background: rgba(79, 172, 254, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .analogy-title {
+            color: var(--accent-primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Floating Calculator Mockup */
+        .calc-preview {
+            background: linear-gradient(135deg, #1a1e26 0%, #0d1117 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.05);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+            border: 1px solid rgba(79, 172, 254, 0.2);
+        }
+
+        .formula-card {
+            background: #000;
+            padding: 1.5rem;
+            border-radius: 16px;
+            font-family: 'Courier New', monospace;
+            color: var(--accent-primary);
+            font-weight: 700;
+            margin: 1rem 0;
+            box-shadow: inset 0 0 20px rgba(0, 242, 254, 0.05);
+        }
+
+        /* Shared vs Dedicated Visual */
+        .visual-split {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .box {
+            flex: 1;
+            height: 80px;
+            border: 1px dashed var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-align: center;
+            padding: 10px;
+        }
+
+        .box.active {
+            border: 1px solid var(--accent-primary);
+            background: rgba(79, 172, 254, 0.1);
+            color: var(--accent-primary);
+        }
+
+        footer {
+            margin-top: 6rem;
+            text-align: center;
+            padding-bottom: 4rem;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 3rem;
+        }
+
+        .footer-text {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @media (max-width: 992px) {
+            .span-8, .span-4, .span-6 { grid-column: span 12; }
+            h1 { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="reveal">
+            <div class="hero-glow"></div>
+            <h1>Architecture Guide</h1>
+            <p class="subtitle">Deploy your infrastructure on a 102-core fleet with precision and efficiency. Industry-standard allocation rules, simplified.</p>
+        </header>
+
+        <div class="grid">
+            <!-- Physical vs Virtual -->
+            <div class="card span-12 reveal" style="animation-delay: 0.2s;">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20m10-10H2"/></svg>
+                </div>
+                <h2><span class="accent-dot"></span> Physical vs. Virtual Cores (vCPU)</h2>
+                <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 300px;">
+                        <p>A physical core is a tangible processing unit—a single brain. vCPUs are created via Hyper-threading, allowing one core to handle two streams of work almost simultaneously.</p>
+                        <div class="analogy-box">
+                            <div class="analogy-title">The Chef Analogy</div>
+                            <p><strong>Physical:</strong> One chef with one hand. Consistent but limits multitasking.<br>
+                            <strong>Virtual:</strong> One chef with <u>two hands</u>. He can't cook two meals at once, but he can prep one while stirring another.</p>
+                        </div>
+                    </div>
+                    <div style="flex: 1; min-width: 300px;">
+                        <div class="formula-card">
+                            102 Physical Cores = 204 vCPUs approx.
+                        </div>
+                        <p>Industry standard assumes clients want vCPUs. Using physical cores without overselling is "Enterprise Premium."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CPU Logic -->
+            <div class="card span-8 reveal" style="animation-delay: 0.3s;">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                </div>
+                <h2><span class="accent-dot"></span> The CPU Allocation</h2>
+                <p>CPU is driven by <strong>Concurrency</strong>. This formula helps you calculate exactly how much compute power a client needs based on their traffic load.</p>
+                <div class="formula-card">
+                    Cores = (Peak Users × Response Time) / 1000ms
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Website Type</th>
+                            <th>vCPUs</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Static Portfolio</td><td>1 - 2</td><td>Standard</td></tr>
+                        <tr><td>CMS (WordPress)</td><td>2 - 4</td><td>High</td></tr>
+                        <tr><td>E-commerce</td><td>4 - 8</td><td>Critical</td></tr>
+                        <tr><td>SaaS Platform</td><td>8 - 12</td><td>Ultra</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Shared vs Dedicated -->
+            <div class="card span-4 reveal" style="animation-delay: 0.4s;">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M3 9h18M9 21V9"/></svg>
+                </div>
+                <h2><span class="accent-dot"></span> Resource Type</h2>
+                <p><strong>Shared (The Apartment):</strong> High density, cost-efficient, prone to "Noisy Neighbors".</p>
+                <div class="visual-split">
+                    <div class="box">Client A</div>
+                    <div class="box active">Client B (Bursting)</div>
+                    <div class="box">Client C</div>
+                </div>
+                <p style="margin-top: 1.5rem;"><strong>Dedicated (The Villa):</strong> Reserved performance, zero interference, premium pricing.</p>
+                <div class="visual-split">
+                    <div class="box active" style="width: 100%;">Reserved Fleet for Client X</div>
+                </div>
+            </div>
+
+            <!-- Storage & Advanced -->
+            <div class="card span-6 reveal" style="animation-delay: 0.5s;">
+                <h2><span class="accent-dot"></span> Storage Logic</h2>
+                <p>It's not just size—it's <strong>IOPS (Speed)</strong>. Calculate storage using the Bloat Factor: Site Size + Growth + 2x Backups.</p>
+                <div class="calc-preview">
+                    <div class="calc-row">
+                        <span>Database Growth</span>
+                        <span class="tag">+1MB / 1k Users</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>Log Retention</span>
+                        <span class="tag">5GB+ Monthly</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>Backup Overhead</span>
+                        <span class="tag">2.0x Multiplier</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAM & Advanced -->
+            <div class="card span-6 reveal" style="animation-delay: 0.6s;">
+                <h2><span class="accent-dot"></span> RAM: The Countertop</h2>
+                <p>If CPU is the chef, RAM is the kitchen table. All processes live here. If it runs out, the server crashes (Swap).</p>
+                <div class="analogy-box" style="border-left-color: var(--neon-pink);">
+                    <div class="analogy-title" style="color: var(--neon-pink);">Golden Rule</div>
+                    <p>Allot at least <strong>1GB RAM per 2 vCPUs</strong>. For Heavy DBs, go for <strong>2GB per Core</strong>.</p>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <p><span style="color: #fff; font-weight: 600;">Bursting:</span> Allow clients to borrow 2x extra capacity during spikes if idle resources exist.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p class="footer-text">Built for Rohit-Bomte Infrastructure Fleet | 102-Core Architecture</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -2,7 +2,45 @@
 
 When allotting resources from your 102-core / 256GB pool, your goal is to balance performance, cost, and reliability. Follow this framework to provide "on-the-spot" estimates.
 
-## 1. The Core Allocation Logic (CPU)
+## 1. Physical Cores vs. Virtual Cores (vCPU)
+
+Understanding the difference between a **Physical Core** and a **Virtual Core (vCPU)** is crucial for capacity planning.
+
+### Physical Cores
+A physical core is a tangible, independent processing unit on your CPU chip. If your server has 102 physical cores, it has 102 individual "brains" that can execute instructions simultaneously.
+- **Performance**: Consistent and predictable.
+- **Analogy**: A chef in a kitchen. 102 chefs can work on 102 different dishes at the exact same time.
+
+### Virtual Cores (vCPUs) / Hyper-Threading
+Hyper-threading is a technology that allows a single physical core to behave like two logical (virtual) cores. This is done by letting the core switch between threads so quickly that it looks like it's doing two things at once.
+- **Impact**: You get ~20-30% more performance than a non-hyperthreaded core, but **NOT** 100% more. 
+- **Usage**: In your 102-core pool, if hyper-threading is enabled, your OS will see **204 vCPUs**.
+- **Analogy**: A chef with two hands. He can't cook two different dishes simultaneously, but he can chop onions with one hand while stirring a pot with the other. It's faster, but he's still only one person.
+
+> [!IMPORTANT]
+> When a client asks for "4 Cores," they usually mean **vCPUs**. If you give them 4 physical cores with no "overselling," they are getting premium performance.
+
+---
+
+## 2. Shared vs. Dedicated Resources
+
+This is the biggest distinction in the hosting industry (Shared Hosting vs. VPS vs. Dedicated Server).
+
+### Shared Resources (The "Apartment" Model)
+In a shared environment, multiple clients use the same pool of CPU and RAM. 
+- **How it works**: You might assign 2 vCPUs to 10 different clients on a server that only has 4 vCPUs.
+- **The Catch**: If Client A's site gets a traffic spike, it might "steal" CPU cycles from Client B, making Client B's site slow (this is called **"Noisy Neighbor"** effect).
+- **Best For**: Low-traffic blogs, small portfolios, and cost-sensitive clients.
+
+### Dedicated Resources (The "Private Villa" Model)
+A portion of the hardware is strictly reserved for one client. 
+- **How it works**: If you allot 8 cores to a client as "Dedicated," those cores are **never** used by anyone else, even if the client's site is idle.
+- **The Catch**: It is more expensive because you can't "oversell" that space.
+- **Best For**: E-commerce, High-traffic APIs, and enterprise applications where performance dips are unacceptable.
+
+---
+
+## 3. The Core Allocation Logic (CPU)
 
 CPU is primarily driven by **Concurrency**. A single core can only do one thing at a time, but multithreading allows it to switch fast.
 
@@ -59,6 +97,29 @@ Since you have a **fixed pool (102C / 256GB)**, think of it as "Floor Space" in 
 - **Your Cost per Core**: `(Total Infrastructure Cost / 102)`
 - **Your Cost per GB**: `(Total Infrastructure Cost / 256)`
 - **The "Client Price"**: `(Resource Cost + Management Fee + Support Markup)`.
+
+---
+
+## 5. Advanced Concepts You Must Know
+
+### IOPS (Input/Output Operations Per Second)
+Storage isn't just about **size (GB)**; it's about **speed**. 
+- **Impact**: A database-heavy site (like a forum) might only need 5GB of space, but it needs high IOPS to read/write data quickly. If the IOPS is low, the site will feel "laggy" even if there is plenty of CPU.
+- **Example**: Moving 1000 tiny pebbles (small DB queries) vs. 1 big rock (a large video file). SSDs provide high IOPS.
+
+### Bandwidth vs. Throughput
+- **Bandwidth**: The total "pipe size" (e.g., 1 Gbps port).
+- **Throughput**: The actual speed at which data is flowing.
+- **Tip**: High-traffic sites need a "fat pipe" to handle many users at once.
+
+### RAM: The "Table Surface"
+If CPU is the chef, RAM is the kitchen counter.
+- **Impact**: All active processes (PHP, MySQL, Caching) live in RAM. If RAM runs out, the server uses **Swap** (disk space used as memory), which is 100x slower and can crash the site.
+- **Standard**: Always allot at least **1GB of RAM per 2 vCPUs** as a baseline.
+
+### Bursting
+This allows a client to "borrow" extra CPU power for a few seconds during a spike. 
+- **Rule**: You can allow clients to "Burst" up to 2x their allotted cores if the server has idle capacity. This keeps their site from crashing during a sudden influx.
 
 > [!TIP]
 > **Oversubscription**: Industry standards allow for "Bursting". If you have 102 cores, you can actually sell up to 150-200 vCPUs because not every client peaks at the same time. Never oversubscribe storage.
