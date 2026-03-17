@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database & Auth Masterclass | In-Depth Engineering Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4338ca;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg: #0b0f1a;
+            --sidebar-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --code-bg: #000000;
+            --glass: rgba(30, 41, 59, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.7;
+            display: flex;
+        }
+
+        /* Sidebar Navigation */
+        aside {
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        aside .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        aside ul {
+            list-style: none;
+        }
+
+        aside li {
+            margin-bottom: 0.5rem;
+        }
+
+        aside a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: block;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        aside a:hover,
+        aside a.active {
+            background: var(--primary-dark);
+            color: white;
+            padding-left: 1.5rem;
+        }
+
+        aside .menu-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            margin: 2rem 0 1rem;
+            font-weight: 700;
+        }
+
+        /* Main Content */
+        main {
+            margin-left: 280px;
+            flex: 1;
+            padding: 4rem 6rem;
+            max-width: 1200px;
+        }
+
+        header {
+            margin-bottom: 5rem;
+        }
+
+        header h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+        }
+
+        header .badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary-light);
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        section {
+            margin-bottom: 8rem;
+            scroll-margin-top: 50px;
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary);
+        }
+
+        h4 {
+            font-size: 1.3rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Technical Callouts */
+        .callout {
+            background: var(--card-bg);
+            border-left: 4px solid var(--primary);
+            padding: 2rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .callout-title {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .pro-con-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .pro-box {
+            color: var(--secondary);
+        }
+
+        .con-box {
+            color: #ef4444;
+        }
+
+        /* ClickHouse Encyclopedia Layout */
+        .engine-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .engine-card .engine-type {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Tables & Lists */
+        ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            list-style-type: square;
+        }
+
+        li {
+            margin-bottom: 0.75rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #111827;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Code & Syntax */
+        pre {
+            background: var(--code-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+        }
+
+        .mermaid {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin: 3rem 0;
+        }
+
+        /* Tags */
+        .tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 700;
+            position: relative;
+            top: -3px;
+        }
+
+        .tag-core {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .tag-special {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            aside {
+                display: none;
+            }
+
+            main {
+                margin-left: 0;
+                padding: 2rem;
+            }
+
+            header h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside>
+        <div class="brand">Engineering.DB</div>
+
+        <div class="menu-label">Masterclass Core</div>
+        <ul>
+            <li><a href="#intro" class="active">Introduction</a></li>
+            <li><a href="#sqlite-pg">SQLite vs PostgreSQL</a></li>
+            <li><a href="#auth-deep">Advanced Auth Dynamics</a></li>
+        </ul>
+
+        <div class="menu-label">ClickHouse Encyclopedia</div>
+        <ul>
+            <li><a href="#mergetree">MergeTree Family</a></li>
+            <li><a href="#log-family">Log Family</a></li>
+            <li><a href="#integration">Integration Engines</a></li>
+            <li><a href="#special-engines">Special Purpose</a></li>
+        </ul>
+
+        <div class="menu-label">Security & Architecture</div>
+        <ul>
+            <li><a href="#jwt-mastery">JWT Mastery</a></li>
+            <li><a href="#schema-design">Schema Architectures</a></li>
+            <li><a href="#table-physics">Table Physics (Physics of Data)</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <header id="intro">
+            <span class="badge">Advanced Certification Module</span>
+            <h1>From Bits to Billions: The Database Masterclass</h1>
+            <p>A comprehensive deep-dive into the storage engines, security frameworks, and architectural patterns of
+                modern software engineering. We aren't just looking at tools; we are studying <strong>how data
+                    moves</strong>.</p>
+        </header>
+
+        <!-- SECTION 1: SQLITE VS POSTGRES -->
+        <section id="sqlite-pg">
+            <h2>1. The Bedrock: SQLite & PostgreSQL</h2>
+            <p>Before we jump to massive scale, we must understand the "Stateful Core". Even major enterprise apps start
+                with a simple relational model.</p>
+
+            <h3>SQLite: The "Embedded" Masterpiece</h3>
+            <p>SQLite is unique because it isn't a "server". It's a <strong>C library</strong>. When you use SQLite,
+                your application code actually performs the file operations. The database is just a single
+                <code>.db</code> file on your disk.
+            </p>
+
+            <div class="callout">
+                <span class="callout-title">The Architecture of SQLite</span>
+                SQLite uses a <strong>B-Tree</strong> structure to store data. Imagine a giant phone book where names
+                are alphabetized, but you can jump to specific pages instantly without flipping through everything. It
+                uses <strong>Write-Ahead Logging (WAL)</strong>, which means it writes new changes to a temporary file
+                first, making it extremely "crash-proof".
+            </div>
+
+            <div class="pro-con-grid">
+                <div class="pro-box">
+                    <h4>Advantages</h4>
+                    <ul>
+                        <li>Zero Latency: No network trip to a server. Reads are near-instant.</li>
+                        <li>Portability: Move the file, move the database.</li>
+                        <li>ACID Compliant: It guarantees your data is never half-written.</li>
+                    </ul>
+                </div>
+                <div class="con-box">
+                    <h4>Disadvantages</h4>
+                    <ul>
+                        <li>Single Writer: Only one process can write at a time. High-concurrency web apps will "lock".
+                        </li>
+                        <li>No Network Access: You can't connect to an SQLite file from another computer easily.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>PostgreSQL: The "Service" Powerhouse</h3>
+            <p>PostgreSQL is a fully-featured, multi-process server. It is built for
+                <strong>Concurrency</strong>—hundreds of people reading and writing at the same exact millisecond.
+            </p>
+
+            <div class="callout">
+                <span class="callout-title">Technical Deep Dive: MVCC</span>
+                Postgres uses <strong>Multi-Version Concurrency Control (MVCC)</strong>. When User A updates a row,
+                Postgres doesn't overwrite it immediately. Instead, it makes a *new version* of that row. This allows
+                User B to keep reading the *old version* without waiting for User A to finish. This is why Postgres is
+                so fast for messy, multi-user apps.
+            </div>
+
+            <h3>Why "GoogleAuth" is in the Postgres conversation?</h3>
+            <p>You often hear about GoogleAuth and Postgres together in modern stacks (like Supabase). Here is the
+                <strong>Real Purpose</strong>:
+            </p>
+            <ol>
+                <li><strong>The Identity Store</strong>: You don't want to store passwords in your DB. It's risky.
+                    Instead, you store the "Google User ID" (a long string of characters) as a Primary Key.</li>
+                <li><strong>The Row Level Security (RLS)</strong>: Postgres has a genius feature where you can write SQL
+                    like:
+                    <code>CREATE POLICY user_can_see_own_files ON files FOR SELECT USING (user_id = auth.uid())</code>.
+                </li>
+                <li><strong>OAuth2 Integration</strong>: The app validates the Google Token, tells Postgres "This is
+                    John," and Postgres automatically filters John's data based on the RLS policy.</li>
+            </ol>
+        </section>
+
+        <!-- SECTION 2: CLICKHOUSE ENGINES -->
+        <section id="clickhouse">
+            <h2>2. ClickHouse Engine Encyclopedia</h2>
+            <p>In ClickHouse, the "Engine" is arguably the most important keyword in your <code>CREATE TABLE</code>
+                statement. It dictates how data is physically stored, compressed, and retrieved. <strong>There is no
+                    'one size fits all'</strong>—you must choose based on your query patterns.</p>
+
+            <!-- MERGETREE FAMILY -->
+            <div id="mergetree" class="engine-card">
+                <span class="engine-type">The Golden Standard</span>
+                <h3>1. The MergeTree Family</h3>
+                <p>MergeTree engines are the workhorses of ClickHouse. They are designed for massive datasets
+                    (Petabytes) and high-speed ingestion.</p>
+
+                <div class="callout">
+                    <span class="callout-title">The "Merge" Secret</span>
+                    When you <code>INSERT</code> into a MergeTree table, ClickHouse doesn't immediately check for
+                    duplicates or sort the whole table. It writes the data into <strong>Parts</strong>. In the
+                    background, ClickHouse "merges" these parts into larger, sorted files. This is why it can handle 1
+                    Million inserts per second without breaking a sweat!
+                </div>
+
+                <h4>MergeTree Sub-Variants (Detailed):</h4>
+                <ul>
+                    <li><strong>MergeTree</strong>: The base version. Fast, but doesn't replicate or deduplicate.</li>
+                    <li><strong>ReplicatedMergeTree</strong>: Essential for high availability. It uses
+                        <strong>ClickHouse Keeper</strong> to sync data across different servers. If one server dies,
+                        your data is safe on another.
+                    </li>
+                    <li><strong>ReplacingMergeTree</strong>: Solves the "Duplicate Data" problem. During merges, it
+                        checks the Primary Key and keeps only the latest row (based on a version column or timestamp).
+                        <em>Disadvantage:</em> Use only if you don't mind occasional duplicates between merges.
+                    </li>
+                    <li><strong>SummingMergeTree</strong>: Perfect for high-speed stats. If you have millions of rows
+                        like "User A: 1 view", it merges them into "User A: 1000 views". <em>Advantage:</em> Massive
+                        reduction in storage.</li>
+                    <li><strong>AggregatingMergeTree</strong>: The most advanced. It stores "Aggregate Functions"
+                        directly in the table. If you want to calculate unique users over a year, this engine makes it
+                        1,000x faster than a normal <code>COUNT(DISTINCT)</code>.</li>
+                    <li><strong>CollapsingMergeTree</strong>: Used for "Updating" data without using the slow
+                        <code>UPDATE</code> command. You insert two rows: one to "cancel" the old row and one to "add"
+                        the new one.
+                    </li>
+                    <li><strong>VersionedCollapsingMergeTree</strong>: Same as above but works well even if data arrives
+                        out of order.</li>
+                </ul>
+            </div>
+
+            <!-- LOG FAMILY -->
+            <div id="log-family" class="engine-card">
+                <span class="engine-type">The Append-Only Tools</span>
+                <h3>2. The Log Family</h3>
+                <p>Log engines are "miniature" engines. They don't support indexes, partitioning, or primary keys. They
+                    just append data to the end of a file.</p>
+
+                <div class="grid">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Engine</th>
+                                <th>Internal Structure</th>
+                                <th>Best For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>TinyLog</strong></td>
+                                <td>One simple file per column. No concurrency (reads block writes).</td>
+                                <td>Tiny temporary tables (< 1M rows).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Log</strong></td>
+                                <td>One file per column + "marks" for skipping data. Supports concurrent reading.</td>
+                                <td>Small metadata or testing tables.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>StripeLog</strong></td>
+                                <td>All columns stored in one giant file. Good for systems with limited file handles.
+                                </td>
+                                <td>Dumping logs before moving them to MergeTree.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p><strong>Disadvantage:</strong> They are strictly "Write Once, Read Many". No deletions allowed!</p>
+            </div>
+
+            <!-- INTEGRATION ENGINES -->
+            <div id="integration" class="engine-card">
+                <span class="engine-type">External Connectivity</span>
+                <h3>3. Integration Engines</h3>
+                <p>ClickHouse acts as a "Data Hub". You can talk to other systems without writing any ETL (Extract,
+                    Transform, Load) code.</p>
+
+                <h4>The Major Connectors:</h4>
+                <ul>
+                    <li><strong>Kafka Engine</strong>: Turns a Kafka topic into a ClickHouse table. Data streams in
+                        continuously. You usually combine this with a <strong>Materialized View</strong> to move data
+                        into a MergeTree table.</li>
+                    <li><strong>S3 / HDFS</strong>: Query files sitting in AWS or Hadoop as if they were local tables.
+                        Perfect for "Data Lake" analysis.</li>
+                    <li><strong>MySQL / PostgreSQL / SQLite</strong>: Connects to your traditional DBs. You can run a
+                        "JOIN" between a billion rows in ClickHouse and a few rows in Postgres!</li>
+                    <li><strong>JDBC / ODBC</strong>: A generic connector for almost any other database in the world.
+                    </li>
+                    <li><strong>URL Engine</strong>: Query an API or a CSV file directly from a web link.</li>
+                </ul>
+            </div>
+
+            <!-- SPECIAL ENGINES -->
+            <div id="special-engines" class="engine-card">
+                <span class="engine-type">Architectural Specialities</span>
+                <h3>4. Special-Purpose Engines</h3>
+                <p>These engines aren't for storing "User Data", but for managing how the database works.</p>
+
+                <div class="grid">
+                    <div class="callout">
+                        <span class="callout-title">Distributed Engine</span>
+                        <strong>The Sharding Manager.</strong> It doesn't store data. When you query a Distributed
+                        table, it splits your query into 100 pieces, sends them to 100 servers, and combines the answer.
+                        This is how ClickHouse scales to billions of rows.
+                    </div>
+                    <div class="callout">
+                        <span class="callout-title">Buffer Engine</span>
+                        <strong>The RAM Shield.</strong> Writing to disk 10,000 times a second is slow. Buffer holds
+                        data in memory and writes it to a MergeTree table only once every 10 seconds in one big "Chunk".
+                    </div>
+                </div>
+
+                <ul>
+                    <li><strong>Dictionary</strong>: A specialized RAM-only engine for "Key-Value" lookups. 100x faster
+                        than a JOIN.</li>
+                    <li><strong>Memory</strong>: Stores everything in RAM. Data is lost if the server restarts. Great
+                        for temporary scratchwork.</li>
+                    <li><strong>Null</strong>: Like a "Black Hole". Data sent here is ignored. Useful for testing or
+                        redirecting data streams.</li>
+                    <li><strong>Executable</strong>: A table where the rows are generated by running a script (Python,
+                        Bash, etc).</li>
+                    <li><strong>GenerateRandom</strong>: Creates random data for performance testing your schemas.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SECTION 3: JWT MASTERY -->
+        <section id="jwt-mastery">
+            <h2>3. JWT Security & Token Sovereignty</h2>
+            <p>A JWT (JSON Web Token) is not just a password. It's a <strong>Stateless Identity Token</strong>. This
+                means the server doesn't need to check the database every time you click a button—it just looks at the
+                signature on the token.</p>
+
+            <div class="engine-card">
+                <h3>The Anatomy of a JWT (Deep Dive)</h3>
+                <p>A JWT consists of three strings separated by dots: <code>Header.Payload.Signature</code></p>
+                <ul>
+                    <li><strong>Header</strong>: Tells the server which algorithm was used (usually <code>HS256</code>
+                        or <code>RS256</code>).</li>
+                    <li><strong>Payload (Claims)</strong>: This is where the user data lives. <em>Standard Claims You
+                            Must Use:</em>
+                        <ul>
+                            <li><code>iss</code> (Issuer): Who created this token? (e.g.,
+                                <code>https://auth.myapp.com</code>)
+                            </li>
+                            <li><code>sub</code> (Subject): The unique ID of the user.</li>
+                            <li><code>aud</code> (Audience): Who is this token intended for? (Prevents using a "Mobile
+                                App" token on an "Admin Dashboard").</li>
+                            <li><code>exp</code> (Expiration): Exact time the token dies. Usually **15 minutes**.</li>
+                            <li><code>iat</code> (Issued At): When was this made?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Signature</strong>: Created by hashing the Header + Payload + a <strong>Secret
+                            Key</strong>. If someone changes the Payload (e.g., changes <code>role: user</code> to
+                        <code>role: admin</code>), the Signature will no longer match, and the server will reject the
+                        token!
+                    </li>
+                </ul>
+            </div>
+
+            <h3>The Battle: Access vs. Refresh Tokens</h3>
+            <p>Why do we have two tokens? Because <strong>Safety vs. Convenience</strong>.</p>
+
+            <div class="grid">
+                <div class="callout">
+                    <span class="callout-title">The Access Token (The Ticket)</span>
+                    Stored in memory. Short-lived (15m). If stolen, the hacker only has 15 minutes before it's useless.
+                </div>
+                <div class="callout" style="border-left-color: var(--secondary);">
+                    <span class="callout-title">The Refresh Token (The ID Card)</span>
+                    Stored in an **HTTP-Only, Secure Cookie**. Long-lived (7-30 days). Used *only* to get a new Access
+                    Token.
+                </div>
+            </div>
+
+            <div class="engine-card">
+                <h3>Advanced: Refresh Token Rotation & Reuse Detection</h3>
+                <p>If a hacker steals a Refresh Token, they could stay logged in forever. To prevent this, we use
+                    <strong>Rotation</strong>.
+                </p>
+
+                <div class="callout">
+                    <span class="callout-title">The "One-Time Use" Logic</span>
+                    1. User sends Refresh Token <strong>RT-1</strong>.<br>
+                    2. Server validates <strong>RT-1</strong>, deletes it from DB, and issues <strong>RT-2</strong>.<br>
+                    3. If anyone (real user OR hacker) tries to use <strong>RT-1</strong> again, the server sees it's
+                    missing/used and <strong>immediately logs out every session for that user</strong>.
+                </div>
+
+                <h4>How to Maintain the Refresh Log (Postgres/SQLite Schema):</h4>
+                <pre><code>CREATE TABLE refresh_tokens_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token_family UUID NOT NULL, -- Ties a chain of rotated tokens together
+    token_hash TEXT NOT NULL UNIQUE, -- Store only the HASH of the token
+    issued_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    revoked_at TIMESTAMP WITH TIME ZONE, -- If non-null, this family is compromised!
+    device_info TEXT, -- e.g. "Safari 17 on MacOS"
+    ip_address INET
+);
+
+-- Index for fast lookup when a user logs in
+CREATE INDEX idx_user_tokens ON refresh_tokens_log(user_id) WHERE revoked_at IS NULL;</code></pre>
+
+                <h4>Implementation Steps for Beginners:</h4>
+                <ol>
+                    <li><strong>Storage</strong>: Use **Redis** for speed or **Postgres** for reliability.</li>
+                    <li><strong>Cleaning</strong>: Run a background job every night to delete expired rows:
+                        <code>DELETE FROM refresh_tokens_log WHERE expires_at < NOW();</code>
+                    </li>
+                    <li><strong>Security</strong>: Never send the Refresh Token back to the client in JSON. Put it in a
+                        <code>Set-Cookie</code> header with <code>HttpOnly</code> and <code>Secure</code> flags. This
+                        prevents JavaScript (and hackers) from reading it.
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- SECTION 4: SCHEMA DESIGN & DATA MODELING -->
+        <section id="schema-design">
+            <h2>4. Schema Design & Data Modeling</h2>
+            <p>A "Schema" is the mathematical blueprint of your data. If you design it correctly, your app can handle
+                millions of users. If you design it poorly, your database will crash before you even get famous.</p>
+
+            <div class="engine-card">
+                <h3>1. The Relational Model (Normalized)</h3>
+                <p>This is the standard for 90% of apps. You split data into small tables to avoid duplication.</p>
+                <ul>
+                    <li><strong>1st Normal Form (1NF)</strong>: No "Lists" inside a cell. Every cell has one value.</li>
+                    <li><strong>2nd Normal Form (2NF)</strong>: Every column must depend on the Primary Key.</li>
+                    <li><strong>3rd Normal Form (3NF)</strong>: No "transitive dependencies" (e.g., if you have ZipCode,
+                        you don't need to store both City and State in the same table, because ZipCode already implies
+                        them).</li>
+                </ul>
+                <p><strong>Pros:</strong> Zero data duplication. <strong>Cons:</strong> Extreme "JOIN" fatigue (joining
+                    10 tables slows down your app).</p>
+            </div>
+
+            <div class="engine-card">
+                <h3>2. The Star & Snowflake Models (Analytical)</h3>
+                <p>These are built for <strong>Business Intelligence (BI)</strong> — calculating totals, averages, and
+                    trends.</p>
+
+                <div class="pro-con-grid">
+                    <div class="callout" style="border-left-color: var(--accent);">
+                        <span class="callout-title">Star Schema (The Fastest)</span>
+                        One central <strong>Fact Table</strong> (Billions of rows of sales) surrounded by
+                        <strong>Dimension Tables</strong> (User details, Product names). It’s called a Star because the
+                        joins look like rays coming from a center.
+                    </div>
+                    <div class="callout" style="border-left-color: var(--primary);">
+                        <span class="callout-title">Snowflake Schema (The Cleanest)</span>
+                        A Star Schema where the Dimensions are normalized. E.g., The "Product" dimension is split into
+                        "Category" and "Manufacturer" tables. Saves space but is harder to query.
+                    </div>
+                </div>
+            </div>
+
+            <div id="table-physics" class="engine-card">
+                <h3>3. The Physics of Tables (Internal Structures)</h3>
+                <p>To be an advanced engineer, you must understand how the binary data actually sits on the drive.</p>
+
+                <h4>Row-Based (PostgreSQL/SQLite)</h4>
+                <p>Data is stored row-by-row: <code>[ID, Name, Date][ID, Name, Date]</code>. Great for "Point
+                    Lookups"—finding exactly one user. <strong>Analogy:</strong> A folder where each file is a person's
+                    full profile.</p>
+
+                <h4>Column-Based (ClickHouse)</h4>
+                <p>Data is stored column-by-column: <code>[IDs...][Names...][Dates...]</code>. <strong>Analogy:</strong>
+                    A spreadsheet where you can rip out the "Price" column and calculate the sum without looking at the
+                    "Names" column. This is why ClickHouse is 100x faster for math.</p>
+
+                <h4>Partitioning vs Sharding (The Scale-Up)</h4>
+                <ul>
+                    <li><strong>Partitioning</strong>: Logical splitting. One table is split into 12 "sub-tables" (one
+                        for each month). The database skips months it doesn't need.</li>
+                    <li><strong>Sharding</strong>: Physical splitting. 1 Million users live on Server A, 1 Million on
+                        Server B. Hard to manage, but can handle infinite growth.</li>
+                </ul>
+
+                <h4>Indexes: The Map of Your Data</h4>
+                <div class="callout">
+                    <span class="callout-title">The B-Tree vs Sparse Index</span>
+                    - <strong>Postgres (B-Tree)</strong>: Every entry has a pointer. Fast for single rows.
+                    - <strong>ClickHouse (Sparse)</strong>: A "Map" that only marks every 8,192nd row. Much smaller
+                    index size, allowing it to fit in RAM for massive tables.
+                </div>
+            </div>
+        </section>
+
+        <footer
+            style="margin-top: 10rem; padding: 4rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted);">
+            <p>&copy; 2026 Database & Security Masterclass | Created for Rohits Learning Path</p>
+        </footer>
+
+    </main>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+        // Simple active link tracker
+        const sections = document.querySelectorAll("section, header");
+        const navLi = document.querySelectorAll("aside ul li a");
+        window.addEventListener("scroll", () => {
+            let current = "";
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 60) {
+                    current = section.getAttribute("id");
+                }
+            });
+
+            navLi.forEach((li) => {
+                li.classList.remove("active");
+                if (li.getAttribute("href").includes(current)) {
+                    li.classList.add("active");
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

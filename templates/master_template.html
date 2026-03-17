@@ -1,0 +1,65 @@
+<!-- 
+  MASTERCLASS DOCUMENTATION TEMPLATE
+  Use this for all new technical guides to ensure consistency. 
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic Name | Masterclass Guide</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        /* CSS TOKENS & SYSTEM (Matches db_auth_guide.html) */
+        :root {
+            --primary: #6366f1;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg: #0b0f1a;
+            --sidebar-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --code-bg: #000000;
+        }
+
+        /* [ADD REMAINING CSS FROM db_auth_guide.html HERE] */
+    </style>
+</head>
+
+<body>
+    <aside>
+        <div class="brand">Engineering.Mastery</div>
+        <div class="menu-label">Topic Essentials</div>
+        <ul>
+            <li><a href="#intro" class="active">Introduction</a></li>
+            <li><a href="#core-concepts">Foundation</a></li>
+        </ul>
+        <!-- [ADD MORE SECTIONS] -->
+    </aside>
+
+    <main>
+        <header id="intro">
+            <span class="badge">Masterclass Module</span>
+            <h1>Topic Title</h1>
+            <p>Brief summary of why this topic is critical from bits to billions.</p>
+        </header>
+
+        <section id="core-concepts">
+            <h2>1. The Foundation</h2>
+            <div class="callout">
+                <span class="callout-title">Deep Dive Title</span>
+                Explain the "internal physics" here.
+            </div>
+        </section>
+    </main>
+
+    <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+</body>
+
+</html>
