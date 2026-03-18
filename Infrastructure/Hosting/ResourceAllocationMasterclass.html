@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Physics & Resource Allocation Masterclass | Infrastructure</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --primary-glow: rgba(0, 242, 254, 0.5);
+            --secondary: #4facfe;
+            --accent: #ff007a;
+            --bg: #0a0c10;
+            --sidebar-bg: #0d1117;
+            --card-bg: #161b22;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #30363d;
+            --code-bg: #000000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        aside {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 2rem;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 3px;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .menu-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        aside ul {
+            list-style: none;
+        }
+
+        aside li {
+            margin-bottom: 0.5rem;
+        }
+
+        aside a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: block;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        aside a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        aside a.active {
+            background: var(--primary);
+            color: #0a0c10;
+            font-weight: 600;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        /* MAIN CONTENT */
+        main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 4rem;
+            max-width: 1200px;
+        }
+
+        header {
+            margin-bottom: 6rem;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 700px;
+        }
+
+        section {
+            margin-bottom: 8rem;
+            scroll-margin-top: 4rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+            color: #fff;
+        }
+
+        h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        strong {
+            color: #fff;
+        }
+
+        .engine-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .engine-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .engine-type {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--primary);
+            background: rgba(0, 242, 254, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            border: 1px solid var(--primary);
+        }
+
+        .callout {
+            background: rgba(255, 0, 122, 0.05);
+            border-left: 4px solid var(--accent);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .callout.tip {
+            border-left-color: var(--secondary);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .callout-title {
+            display: block;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .tip .callout-title {
+            color: var(--secondary);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th {
+            text-align: left;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 1rem;
+        }
+
+        .mermaid {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .formula-card {
+            background: #000;
+            padding: 1.5rem;
+            border-radius: 16px;
+            font-family: 'Fira Code', monospace;
+            color: var(--primary);
+            font-weight: 700;
+            margin: 1rem 0;
+            box-shadow: inset 0 0 20px rgba(0, 242, 254, 0.05);
+            text-align: center;
+            border: 1px solid rgba(0, 242, 254, 0.2);
+        }
+
+        blockquote {
+            background: rgba(0, 242, 254, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 12px 12px 0;
+            font-style: italic;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid var(--border);
+            margin: 4rem 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .checklist-num {
+            background: var(--primary);
+            color: #000;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        /* Comparison Style */
+        .comp-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+        }
+
+        @media (max-width: 1024px) {
+            aside {
+                display: none;
+            }
+
+            main {
+                margin-left: 0;
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside>
+        <div class="brand">Infra.Alloc</div>
+        <div class="menu-label">Architecture Sections</div>
+        <ul>
+            <li><a href="#intro" class="active">Introduction</a></li>
+            <li><a href="#physical-core">What is a Physical Core?</a></li>
+            <li><a href="#core-comparison">Physical vs Virtual</a></li>
+            <li><a href="#hyperthreading">Hyper-Threading (102 Cores)</a></li>
+            <li><a href="#virtualization">Virtualization & Cloudy</a></li>
+            <li><a href="#shared-dedicated">Shared vs Dedicated</a></li>
+            <li><a href="#cpu-logic">CPU Allocation Logic</a></li>
+            <li><a href="#storage-logic">Storage Logic</a></li>
+            <li><a href="#checklist">Client Checklist</a></li>
+            <li><a href="#advanced">Advanced (IOPS, RAM)</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <header id="intro">
+            <span class="badge">Masterclass Edition</span>
+            <h1>Web Hosting Resource Allocation Guide</h1>
+            <p>Mastering the "internal physics" of your 102-core infrastructure. Learn how to divide, allocate, and optimize resources like an industry pro.</p>
+        </header>
+
+        <!-- SECTION 1: PHYSICAL CORES -->
+        <section id="physical-core">
+            <h2>1. What is a Physical Core?</h2>
+            <p>Think of the Physical Core as the <strong>actual, tangible engine</strong> of your server. It's not code; it's silicon and electricity.</p>
+
+            <div class="engine-card">
+                <span class="engine-type">Hardware Reality</span>
+                <h3>The Silicon Engine</h3>
+                <p>A physical core is a single, independent silicon engine located inside the CPU chip. It contains its own circuitry to execute instructions directly.</p>
+                
+                <div class="grid">
+                    <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                        <strong>Independent Action</strong>
+                        <p style="font-size: 0.9rem;">Each core works on its own task with its own ALU (Arithmetic Logic Unit) and Control Unit. It's truly multitasking.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                        <strong>Raw Performance</strong>
+                        <p style="font-size: 0.9rem;">Physical cores allow a computer to handle more tasks simultaneously without slowing down, unlike software-based hacks.</p>
+                    </div>
+                </div>
+
+                <div class="callout tip">
+                    <span class="callout-title">The "Chef" Analogy</span>
+                    A 4-core processor has 4 physical engines. It's exactly like having 4 real chefs in a kitchen. Each one has their own hands, their own knife, and their own stove. They don't need to wait for each other.
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- SECTION 2: COMPARISON TABLE -->
+        <section id="core-comparison">
+            <h2>2. Physical Core vs. Virtual Core (vCPU)</h2>
+            <p>While the names sound similar, they are worlds apart in how they actually work.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Physical Core</th>
+                        <th>Virtual Core (vCPU/Logical)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Physicality</strong></td>
+                        <td>Real hardware on the CPU chip.</td>
+                        <td>Software/Logical abstraction.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Function</strong></td>
+                        <td>Executes instructions directly.</td>
+                        <td>Manages task threads (often 2 per core).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number</strong></td>
+                        <td>Fixed per processor (e.g., your 102 cores).</td>
+                        <td>Higher than physical if hyper-threading is on.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Performance</strong></td>
+                        <td>Higher; dedicated performance.</td>
+                        <td>Lower per core; shared performance.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="grid">
+                <div class="engine-card">
+                    <h3>Logical Cores (Threads)</h3>
+                    <p>These are the total "processors" the OS sees. If you have 102 cores and use hyper-threading, the OS thinks it has 204 processors.</p>
+                </div>
+                <div class="engine-card">
+                    <h3>Virtual Cores (vCPUs)</h3>
+                    <p>These are logical divisions assigned to Virtual Machines (VMs). One vCPU corresponds to one "thread" of a physical core.</p>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- SECTION 3: THE 102 CORE CALCULATION -->
+        <section id="hyperthreading">
+            <h2>3. Hyper-Threading: Your 102-Core Pool</h2>
+            <p>How do we get from 102 Physical Cores to 204 Virtual Cores? It depends on a technology called <strong>Hyper-Threading</strong> (Intel) or <strong>SMT</strong> (AMD).</p>
+
+            <div class="engine-card">
+                <span class="engine-type">Capacity Planning</span>
+                <h3>The Core Multiplier</h3>
+                
+                <div class="grid">
+                    <div class="formula-card">
+                        <div class="comp-header"><span>Standard (Enabled)</span></div>
+                        102 Cores × 2 = <strong>204 vCPUs/Threads</strong>
+                    </div>
+                    <div class="formula-card">
+                        <div class="comp-header"><span>Disabled</span></div>
+                        102 Cores × 1 = <strong>102 vCPUs/Threads</strong>
+                    </div>
+                </div>
+
+                <p style="margin-top: 1.5rem;"><strong>Why it works:</strong> Hyper-threading allows one physical core to look like two to the operating system. It works by letting the core switch between two streams of work so fast that it seems like it's doing both at once.</p>
+                
+                <div class="callout">
+                    <span class="callout-title">One-Go Concept</span>
+                    If Physical Cores are <strong>Chefs</strong>, Hyper-threading is a chef with <strong>Two Hands</strong>. He can't cook two meals at the same time, but he can stir with one hand while chopping with the other. It's about 30% faster than one hand, but not as fast as two separate chefs!
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- SECTION 4: VIRTUALIZATION CONTEXT -->
+        <section id="virtualization">
+            <h2>4. Virtualization & Over-Provisioning</h2>
+            <p>In a cloud environment, you aren't strictly limited to 204 Virtual Machines just because you have 204 vCPUs.</p>
+
+            <div class="engine-card">
+                <h3>The Logic of "Selling Air" (Over-Provisioning)</h3>
+                <p>Cloud providers (like VMware, KVM, or Hyper-V) can assign more vCPUs to virtual machines than there are physical cores available.</p>
+                <div class="mermaid">
+                    graph TD
+                    P[102 Physical Cores] --> T[204 Threads/vCPUs]
+                    T --> VM1[VM 1: 4 vCPUs]
+                    T --> VM2[VM 2: 8 vCPUs]
+                    T --> VM3[VM 3: 2 vCPUs]
+                    T --> VMN[...many more VMs]
+                </div>
+                <p><strong>Ratios:</strong> You can assign vCPUs to physical cores in ratios like <strong>1:1</strong> (Premium), <strong>2:1</strong> (Standard), or even higher if the workload is light.</p>
+            </div>
+
+            <div class="callout tip">
+                <span class="callout-title">Why this matters?</span>
+                Virtual cores are crucial for efficiency. They allow providers to divide massive physical CPU power among multiple smaller, isolated virtual environments, ensuring no hardware goes to waste.
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- SECTION 5: SHARED VS DEDICATED -->
+        <section id="shared-dedicated">
+            <h2>5. Shared vs. Dedicated: Apartment vs. Villa</h2>
+            <div class="grid">
+                <div class="engine-card">
+                    <h3>Shared (Apartment)</h3>
+                    <p>Multiple clients use the same CPU pool. Cheap, but if a neighbor hosts a "party" (traffic spike), your site might get slow. This is the **Noisy Neighbor** effect.</p>
+                </div>
+                <div class="engine-card">
+                    <h3>Dedicated (Private Villa)</h3>
+                    <p>Reserves specific physical resources just for you. No sharing, no slowdowns, but much higher cost.</p>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- SECTION 6: CPU LOGIC -->
+        <section id="cpu-logic">
+            <h2>6. The Core Allocation Logic (CPU)</h2>
+            <p>How many cores does a site actually need? Use the <strong>Concurrency Physics</strong> formula.</p>
+
+            <div class="formula-card" style="font-size: 1.25rem;">
+                Required Cores = (Peak Concurrent Users × Avg Processing Time) / 1000ms
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Site Type</th>
+                        <th>Peak Users</th>
+                        <th>Recommended Cores</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Static / Portfolio</strong></td>
+                        <td>100 - 500</td>
+                        <td>1 - 2 Cores</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Simple WordPress</strong></td>
+                        <td>50 - 100</td>
+                        <td>2 - 4 Cores</td>
+                    </tr>
+                    <tr>
+                        <td><strong>E-commerce (Woo)</strong></td>
+                        <td>20 - 50</td>
+                        <td>4 - 8 Cores</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Logic-Heavy SaaS</strong></td>
+                        <td>10 - 20</td>
+                        <td>8 - 12 Cores</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <hr>
+
+        <!-- SECTION 7: STORAGE LOGIC -->
+        <section id="storage-logic">
+            <h2>7. The Storage Allocation Logic</h2>
+            <p>Storage isn't just site files. It's the "Bloat Factor": Application + Media + DB + Logs + Backups.</p>
+
+            <div class="formula-card">
+                Total Storage = (Site Size + Predicted Growth + 2x Snapshot Size) × 1.25 Buffer
+            </div>
+            
+            <div class="callout tip">
+                <span class="callout-title">The Master Rule</span>
+                Never oversubscribe storage. While you can "over-sell" CPU, if you run out of physical disk space, the entire server crashes instantly.
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- SECTION 8: CHECKLIST -->
+        <section id="checklist">
+            <h2>8. Client Interview Checklist</h2>
+            <div class="checklist-item"><div class="checklist-num">1</div><div><strong>Peak Traffic:</strong> Highest number of users at the exact same second.</div></div>
+            <div class="checklist-item"><div class="checklist-num">2</div><div><strong>Intensity:</strong> Does the site process images/videos? (If yes, 2x cores).</div></div>
+            <div class="checklist-item"><div class="checklist-num">3</div><div><strong>Media Load:</strong> How much storage will images/videos take monthly?</div></div>
+            <div class="checklist-item"><div class="checklist-num">4</div><div><strong>Uptime:</strong> High availability requires clustering (Doubles resources).</div></div>
+        </section>
+
+        <hr>
+
+        <!-- SECTION 9: ADVANCED -->
+        <section id="advanced">
+            <h2>9. Advanced Concepts</h2>
+            <div class="grid">
+                <div class="engine-card">
+                    <h3>IOPS (Disk Speed)</h3>
+                    <p>Speed > Size. A database-heavy site needs fast reading/writing (IOPS) more than it needs 100GB of space.</p>
+                </div>
+                <div class="engine-card">
+                    <h3>RAM (The Countertop)</h3>
+                    <p>All active work happens in RAM. Running out of RAM causes **Swap** (using the slow disk as memory), causing a 100x slowdown.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer style="margin-top: 10rem; padding: 4rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted);">
+            <p>Infrastructure Allocation Masterclass v2.0 | Google Deepmind AntiGravity</p>
+        </footer>
+    </main>
+
+    <script>
+        document.querySelectorAll('aside a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                document.querySelectorAll('aside a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });
+    </script>
+</body>
+
+</html>
