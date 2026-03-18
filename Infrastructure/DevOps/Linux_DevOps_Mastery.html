@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux & DevOps Mastery | The Ultimate Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0f172a;
+            --bg-card: #1e293b;
+            --primary: #6366f1;
+            --secondary: #22d3ee;
+            --accent: #a855f7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--secondary); }
+
+        /* --- Header & Navigation --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        nav a:hover {
+            color: var(--secondary);
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 5%;
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
+            margin-top: 4rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-badges {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .badge {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* --- Main Content Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 5%;
+        }
+
+        section {
+            margin-bottom: 8rem;
+            scroll-margin-top: 100px;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-header h2::before {
+            content: '';
+            width: 40px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* --- Cards & Content --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .card:hover::before { opacity: 1; }
+
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        /* --- Floating Back to Top --- */
+        #backToTop {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
+            border: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        #backToTop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #backToTop:hover {
+            transform: scale(1.1);
+            background: var(--secondary);
+        }
+
+        /* --- Copy Button for Table --- */
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-left: 0.5rem;
+        }
+
+        .copy-btn:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .card .answer {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pro-tip {
+            background: rgba(34, 211, 238, 0.05);
+            border-left: 3px solid var(--secondary);
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .pro-tip strong { color: var(--secondary); display: block; margin-bottom: 0.3rem; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: var(--primary);
+            font-size: 0.9em;
+        }
+
+        .code-block {
+            background: #0a0f1d;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            position: relative;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #d1d5db;
+        }
+
+        .code-block::after {
+            content: 'bash';
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* --- Tables --- */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            color: var(--secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+        }
+
+        td {
+            padding: 1.2rem 1.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-main);
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 4rem 5%;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        /* --- Search Bar --- */
+        .search-container {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-container input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            nav ul { display: none; }
+            .hero h1 { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">DevOpsMastery.</div>
+        <nav>
+            <ul>
+                <li><a href="#basics">Basics</a></li>
+                <li><a href="#filesystem">Filesystem</a></li>
+                <li><a href="#security">Security</a></li>
+                <li><a href="#networking">Networking</a></li>
+                <li><a href="#advanced">Advanced Tools</a></li>
+                <li><a href="#devops">Modern DevOps</a></li>
+                <li><a href="#observability">Observability</a></li>
+                <li><a href="#internals">Internals</a></li>
+                <li><a href="#performance">Performance</a></li>
+                <li><a href="#commands">Commands</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1 class="reveal">Mastering Linux & <br><span style="color: var(--secondary)">Modern DevOps</span></h1>
+            <p class="reveal" style="animation-delay: 0.2s">The comprehensive guide for beginners and professionals. Covering 200+ technical questions, core concepts, and modern infrastructure patterns with real-life examples.</p>
+            <div class="hero-badges reveal" style="animation-delay: 0.4s">
+                <div class="badge">🚀 200+ Interview Questions</div>
+                <div class="badge">🛠️ 70+ Essential Commands</div>
+                <div class="badge">☁️ Cloud & Containers</div>
+                <div class="badge">⛓️ CI/CD Pipelines</div>
+            </div>
+        </section>
+
+        <div class="container">
+            
+            <!-- Section 1: Basics -->
+            <section id="basics">
+                <div class="section-header">
+                    <h2>The Linux Universe</h2>
+                    <p>Understanding the foundation of modern server infrastructure from scratch.</p>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <h3>1. What is an Operating System (OS)?</h3>
+                        <p class="answer">Think of an OS as the "Manager" of a company. It coordinates everything between the hardware (the office building and machines) and the software (the employees performing tasks). Without it, the computer is just a pile of metal and silicon.</p>
+                        <div class="pro-tip">
+                            <strong>Examples:</strong> Windows (the most common for home/office), macOS (for creators), and Linux (the backbone of the internet).
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>2. What is the Linux Kernel?</h3>
+                        <p class="answer">The Kernel is the heart of the operating system. It's the silent worker that manages the CPU, Memory, and Devices. When you save a file, the Kernel is the one actually talking to the hard drive.</p>
+                        <div class="pro-tip">
+                            <strong>Kernel vs. User Space:</strong> To keep the system safe, Linux separates the "VIP Room" (Kernel Space, where hardware is touched) from the "Public Area" (User Space, where your apps like Chrome or VS Code live). Apps must ask the Kernel for permission via "System Calls" to do anything important.
+                        </div>
+                    </div>
+                    <div class="card" style="grid-column: span 2;">
+                        <h3>2b. Deep Dive: The Linux Boot Journey</h3>
+                        <p class="answer">What happens when you press the Power Button? It's a precisely choreographed 4-stage journey:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 1rem; color: var(--text-muted);">
+                            <li><strong>BIOS/UEFI:</strong> The hardware wakes up and runs a Power-On Self-Test (POST). It then looks for a bootable device.</li>
+                            <li><strong>GRUB (Bootloader):</strong> This menu lets you choose which OS to load. Its main job is to find the Kernel on your disk and load it into RAM.</li>
+                            <li><strong>Kernel Initialization:</strong> The Kernel takes control, probes the hardware, and mounts the "Root File System" (<code>/</code>).</li>
+                            <li><strong>Init/Systemd:</strong> The very first process (PID 1) starts. It wakes up all the other "Daemons" (background services) like your network manager or desktop environment.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>3. How to check Kernel version?</h3>
+                        <div class="answer">Use the command <code>uname -a</code>. This prints system information including the Kernel version, release, and machine architecture.</div>
+                        <div class="code-block">
+                            $ uname -a
+                            Linux devops-srv 6.5.0-18-generic #18-Ubuntu SMP ... x86_64
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Filesystem -->
+            <section id="filesystem">
+                <div class="section-header">
+                    <h2>Navigating the File System</h2>
+                    <p>Mastering the art of moving around and managing files like a pro.</p>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <h3>4. Navigation Trio: cd, pwd, and ls</h3>
+                        <p class="answer">These are your legs in the Linux world. Use <code>cd</code> to move (Change Directory), <code>pwd</code> to see where you are (Print Working Directory), and <code>ls</code> to look around (List).</p>
+                        <div class="pro-tip">
+                            <strong>Think of it like:</strong> <code>ls</code> is opening your eyes, <code>pwd</code> is looking at most a map, and <code>cd</code> is walking to another room.
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>5. Creating Files & Folders</h3>
+                        <p class="answer">Use <code>touch filename</code> to create an empty file (or update the timestamp if it already exists). Use <code>mkdir dirname</code> to create a fresh directory.</p>
+                        <div class="code-block">
+                            $ touch script.sh
+                            $ mkdir backup_logs
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>6. Copy, Move, and Rename</h3>
+                        <p class="answer"><code>cp</code> copies, <code>mv</code> moves (or renames). If you "move" a file to a new name in the same place, you've effectively renamed it!</p>
+                        <div class="pro-tip">
+                            <strong>Rename Example:</strong> <code>mv old_name.txt new_name.txt</code>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>7. Deleting Safely</h3>
+                        <p class="answer"><code>rm</code> deletes files. <code>rmdir</code> deletes <em>empty</em> directories. To delete a folder with everything inside it, use <code>rm -rf foldername</code> (Be extremely careful!).</p>
+                        <div class="pro-tip">
+                            <strong>Caution:</strong> Linux doesn't have a "Recycle Bin". Once you <code>rm</code>, it's gone.
+                        </div>
+                    </div>
+                    <div class="card" style="grid-column: span 2;">
+                        <h3>7b. Deep Dive: What is an Inode?</h3>
+                        <p class="answer">To Linux, a file's "name" is just a label. The real "ID card" of a file is the <strong>Inode</strong>. It stores everything EXCEPT the filename and the actual data:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 1rem; color: var(--text-muted);">
+                            <li>File Type and Permissions</li>
+                            <li>Owner and Group IDs</li>
+                            <li>File Size and Timestamps (Created, Modified, Accessed)</li>
+                            <li>Pointers to where the data blocks are on the disk.</li>
+                        </ul>
+                        <div class="pro-tip">
+                            <strong>Why it matters:</strong> If you run out of Inodes, you can't create new files, even if you have 100GB of free disk space!
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>7c. The FHS (Filesystem Hierarchy Standard)</h3>
+                        <p class="answer">Linux follows a strict map. Every folder has a purpose:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 1rem; color: var(--text-muted);">
+                            <li><code>/etc</code>: Configuration files (The system's brain).</li>
+                            <li><code>/bin</code>: Essential binaries (ls, cp, rm).</li>
+                            <li><code>/var/log</code>: Where every event is recorded.</li>
+                            <li><code>/home</code>: Where individual users store their personal files.</li>
+                            <li><code>/root</code>: The home for the superuser.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Users & Security -->
+            <section id="security">
+                <div class="section-header">
+                    <h2>Users, Permissions & Security</h2>
+                    <p>Who belongs here? What can they do? Let's find out.</p>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <h3>8. Who is 'root'?</h3>
+                        <p class="answer">The Root user is the "Superuser" — the absolute god of the system. Root can delete anything, install anything, and change any setting. It's dangerous to stay as root all the time!</p>
+                        <div class="pro-tip">
+                            <strong>Standard Prompt:</strong> <code>$</code> for regular users, <code>#</code> for root.
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>9. The sudo Command</h3>
+                        <p class="answer">Short for "SuperUser DO". It allows a regular user to perform one task with root privileges. It's like having a temporary key to the VIP room.</p>
+                        <div class="code-block">
+                            $ sudo apt update
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>10. Permissions: chmod and chown</h3>
+                        <p class="answer"><code>chmod</code> (Change Mode) changes <em>what</em> can be done (read, write, execute). <code>chown</code> (Change Owner) changes <em>who</em> owns the file.</p>
+                        <div class="pro-tip">
+                            <strong>The Permissions Code:</strong> Read (4), Write (2), Execute (1). Add them up: 7 (rwx), 5 (r-x).
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>11. File: /etc/passwd</h3>
+                        <p class="answer">This isn't where passwords are! It's actually a database of all user accounts on the system, their IDs, and their default shells.</p>
+                        <div class="pro-tip">
+                            <strong>Real Passwords:</strong> Are stored securely in <code>/etc/shadow</code>.
+                        </div>
+                    </div>
+                    <div class="card" style="grid-column: span 2;">
+                        <h3>11b. Advanced: SUID, SGID, and Sticky Bit</h3>
+                        <p class="answer">Beyond the standard <code>rwx</code>, Linux has special permissions for advanced scenarios:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 1rem; color: var(--text-muted);">
+                            <li><strong>SUID (Set User ID):</strong> When run, the program "borrows" the permissions of the file owner (often root). Example: <code>passwd</code> needs to write to <code>/etc/shadow</code>.</li>
+                            <li><strong>SGID (Set Group ID):</strong> Similar to SUID but for the group. In a directory, new files inherit the directory's group.</li>
+                            <li><strong>Sticky Bit:</strong> Used on shared folders like <code>/tmp</code>. It ensures only the owner of a file can delete it, even if others have write access to the folder.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>11c. Professional SSH Hardening</h3>
+                        <p class="answer">Securing your front door is critical. Always do these 3 things in <code>/etc/ssh/sshd_config</code>:</p>
+                        <ol style="margin-left: 1.5rem; margin-top: 1rem; color: var(--text-muted);">
+                            <li><code>PermitRootLogin no</code> (Never let root log in directly).</li>
+                            <li><code>PasswordAuthentication no</code> (Use SSH Keys only).</li>
+                            <li><code>Port 2222</code> (Move away from default port 22 to avoid bots).</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Advanced Tools -->
+            <section id="advanced">
+                <div class="section-header">
+                    <h2>Advanced Command Line Tools</h2>
+                    <p>The "Power Tools" of Linux. Master these to automate almost anything.</p>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <h3>12. grep: The Search Master</h3>
+                        <p class="answer">Grep stands for "Global Regular Expression Print". Use it to find text inside files. It's like 'Ctrl+F' but for your entire system.</p>
+                        <div class="code-block">
+                            $ grep "error" /var/log/syslog
+                        </div>
+                        <div class="pro-tip">
+                            <strong>Useful Flag:</strong> <code>grep -i</code> makes the search case-insensitive.
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>13. sed & awk: The Content Shapers</h3>
+                        <p class="answer"><code>sed</code> is a stream editor (great for find-and-replace). <code>awk</code> is a full programming language for processing text in columns/tables.</p>
+                        <div class="pro-tip">
+                            <strong>awk Example:</strong> <code>awk '{print $1}' file.txt</code> prints only the first column.
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>14. Pipes (|) and Redirection (>)</h3>
+                        <p class="answer">A <strong>Pipe</strong> takes the output of one command and feeds it as input to another. <strong>Redirection</strong> (<code>></code>) saves the output to a file.</p>
+                        <div class="pro-tip">
+                            <strong>Combined:</strong> <code>ls -l | grep ".sh" > shell_files.txt</code>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>15. find: The Detective</h3>
+                        <p class="answer">Use <code>find</code> to search for files based on names, size, permissions, or time. It's incredibly deep and powerful.</p>
+                        <div class="code-block">
+                            $ find /home -name "*.jpg"
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Networking -->
+            <section id="networking">
+                <div class="section-header">
+                    <h2>Networking & Infrastructure</h2>
+                    <p>Connecting the dots. How servers talk and how to fix them when they don't.</p>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <h3>16. What is an IP vs. Gateway?</h3>
+                        <p class="answer">An <strong>IP Address</strong> is your server's unique home address. The <strong>Gateway</strong> is the "front door" of your network that leads to the rest of the internet.</p>
+                        <div class="pro-tip">
+                            <strong>Analogy:</strong> Your house has a distinct address (IP), but you always leave through the main gate (Gateway) to reach the city.
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>17. DNS: The Internet's Phonebook</h3>
+                        <p class="answer">DNS (Domain Name System) translates human names like <code>google.com</code> into IP addresses like <code>142.250.190.46</code>.</p>
+                        <div class="pro-tip">
+                            <strong>Troubleshooting:</strong> Use <code>dig</code> or <code>nslookup</code> to check DNS records.
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>18. ping & traceroute</h3>
+                        <p class="answer"><code>ping</code> checks if a server is alive. <code>traceroute</code> shows you every "stop" (router) a packet makes on its way to the destination.</p>
+                        <div class="pro-tip">
+                            <strong>If ping fails:</strong> The server might be down, or a firewall might be blocking your "knock".
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>19. netstat & ss</h3>
+                        <p class="answer">These tools show you what "ports" are open on your server. It's like checking which windows and doors are unlocked in your house.</p>
+                        <div class="code-block">
+                            $ ss -tuln
+                        </div>
+                    </div>
+                    <div class="card" style="grid-column: span 2;">
+                        <h3>19b. The OSI Model: The 7 Layers of Networking</h3>
+                        <p class="answer">How data travels across the world, visualized in 7 steps:</p>
+                        <table style="width: 100%; margin-top: 1rem; border-collapse: collapse; color: var(--text-muted); font-size: 0.85rem;">
+                            <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 0.5rem;"><strong>7. Application</strong></td><td>HTTP, SSH, DNS (What you interact with)</td></tr>
+                            <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 0.5rem;"><strong>6. Presentation</strong></td><td>Encryption, Compression (SSL/TLS)</td></tr>
+                            <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 0.5rem;"><strong>5. Session</strong></td><td>Start/Stop connections</td></tr>
+                            <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 0.5rem;"><strong>4. Transport</strong></td><td>TCP (Reliable) vs UDP (Fast)</td></tr>
+                            <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 0.5rem;"><strong>3. Network</strong></td><td>IP Routing (The logic)</td></tr>
+                            <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 0.5rem;"><strong>2. Data Link</strong></td><td>MAC Addresses, Switches (The wiring)</td></tr>
+                            <tr><td style="padding: 0.5rem;"><strong>1. Physical</strong></td><td>Cables, Fiber, Wi-Fi radio waves</td></tr>
+                        </table>
+                    </div>
+                    <div class="card">
+                        <h3>19c. The TCP 3-Way Handshake</h3>
+                        <p class="answer">Before a server and client talk, they must "agree" to talk:</p>
+                        <ol style="margin-left: 1.5rem; margin-top: 1rem; color: var(--text-muted);">
+                            <li><strong>SYN:</strong> Client says "Hey, can we talk?"</li>
+                            <li><strong>SYN-ACK:</strong> Server says "Yes, I heard you. Can YOU hear me?"</li>
+                            <li><strong>ACK:</strong> Client says "Yes, loud and clear. Let's start!"</li>
+                        </ol>
+                    </div>
+                </div>
+            <!-- Section 6: System Management & Monitoring -->
+            <section id="management">
+                <div class="section-header">
+                    <h2>System Management & Monitoring</h2>
+                    <p>Keeping the lights on and the engine running smoothly.</p>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <h3>20. Processes: ps, top, and kill</h3>
+                        <p class="answer">Everything running on Linux is a <strong>Process</strong>. <code>ps</code> lists them, <code>top</code> shows them in real-time, and <code>kill</code> stops them.</p>
+                        <div class="pro-tip">
+                            <strong>Zombie Processes:</strong> These are "ghosts" in your system. They've finished their work but are still hanging around in the process table waiting for their parent to notice them.
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>21. Log Management: /var/log</h3>
+                        <p class="answer">Linux is a big talker; it logs <em>everything</em>. Most logs live in <code>/var/log</code>. Use <code>tail -f</code> to watch a log file live as it updates.</p>
+                        <div class="code-block">
+                            $ tail -f /var/log/nginx/access.log
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>22. Storage: df and du</h3>
+                        <p class="answer"><code>df</code> (Disk Free) shows how much space is left on your "hard drives". <code>du</code> (Disk Usage) shows how much space a specific folder is taking up.</p>
+                        <div class="pro-tip">
+                            <strong>Beginner Trick:</strong> <code>df -h</code> makes the numbers "Human Readable" (GB instead of bytes).
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>23. Scheduling: crontab</h3>
+                        <p class="answer">Need to run a script every night at 2 AM? Use <code>crontab</code>. It's the "alarm clock" of the Linux world.</p>
+                        <div class="pro-tip">
+                            <strong>Syntax:</strong> Minute Hour Day Month Day-of-Week (<code>* * * * *</code>)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Modern DevOps Mastery -->
+            <section id="devops">
+                <div class="section-header">
+                    <h2>Modern DevOps Mastery</h2>
+                    <p>Going beyond the basics into the world of automation and scale.</p>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <h3>24. Containers: What is Docker?</h3>
+                        <p class="answer">Containers are like "lightweight hotels" for your app. They package everything the app needs to run, so it works exactly the same on your laptop as it does in the cloud.</p>
+                        <div class="pro-tip">
+                            <strong>Analogy:</strong> If a Virtual Machine is a whole house with its own pipes and wires, a Container is an apartment in a building sharing the core plumbing (the Linux Kernel).
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>25. CI/CD: The Assembly Line</h3>
+                        <p class="answer">Continuous Integration (CI) and Continuous Deployment (CD) automate the process of testing and shipping code. It's like a factory assembly line for software.</p>
+                        <div class="pro-tip">
+                            <strong>Tools:</strong> GitHub Actions, GitLab CI, and Jenkins are the big players here.
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>26. Orchestration: Kubernetes (K8s)</h3>
+                        <p class="answer">If Docker provides the containers, Kubernetes is the "Captain" of the ship that decides where those containers should go, how they should talk, and what to do if one crashes.</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                            <li><strong>Pods:</strong> The smallest unit in K8s. Think of it as a wrapper around one or more containers.</li>
+                            <li><strong>Deployments:</strong> Tell K8s how many copies (replicas) of your app should be running. If one dies, K8s automatically starts a new one (Self-healing).</li>
+                            <li><strong>Services:</strong> The "Static IP" or Load Balancer for your pods. Since pods are born and die frequently, Services give them a stable way to talk to each other.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>27. Infrastructure as Code (IaC)</h3>
+                        <p class="answer">Instead of clicking buttons in a cloud console, you write code (like Terraform) to build your whole data center. It's predictable, repeatable, and fast.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 8: Observability Mastery -->
+            <section id="observability">
+                <div class="section-header">
+                    <h2>Observability Mastery</h2>
+                    <p>Don't just run systems; understand them in real-time.</p>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <h3>28. The 3 Pillars of Observability</h3>
+                        <p class="answer">To know if your system is healthy, you need three things:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 1rem; color: var(--text-muted);">
+                            <li><strong>Logs:</strong> Discrete events (e.g., "User logged in", "Database connection failed"). Great for debugging <em>what</em> happened.</li>
+                            <li><strong>Metrics:</strong> Aggregated numbers (e.g., "CPU is at 80%", "99% of requests take < 200ms"). Great for <em>when</em> something is wrong.</li>
+                            <li><strong>Traces:</strong> The journey of a single request across multiple services. Great for finding <em>where</em> the bottleneck is.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>29. The "Gold Standard" Tools</h3>
+                        <p class="answer"><strong>Prometheus & Grafana:</strong> The ultimate duo for metrics. Prometheus collects the numbers, and Grafana turns them into beautiful, glowing dashboards.</p>
+                        <div class="pro-tip">
+                            <strong>ELK Stack:</strong> Elasticsearch (Search engine), Logstash (Processor), and Kibana (Visualizer). The king of log management.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 9: Internal Magic -->
+            <section id="internals">
+                <div class="section-header">
+                    <h2>Advanced Linux Internals</h2>
+                    <p>The secret magic that makes modern technology possible.</p>
+                </div>
+                <div class="grid">
+                    <div class="card" style="grid-column: span 2;">
+                        <h3>30. How Docker Actually Works: Namespaces & Cgroups</h3>
+                        <p class="answer">Docker isn't magic; it uses two core Linux features to create "isolation":</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+                            <div>
+                                <strong style="color: var(--secondary);">Namespaces (The Illusion)</strong>
+                                <p style="color: var(--text-muted); font-size: 0.9rem;">This gives the process its own private view of the system. It thinks it has its own separate IP, its own users, and its own files, even though it's sharing with everyone else.</p>
+                            </div>
+                            <div>
+                                <strong style="color: var(--primary);">Cgroups (The Limits)</strong>
+                                <p style="color: var(--text-muted); font-size: 0.9rem;">Control Groups ensure a single container can't "hog" all the resources. They set hard limits on how much CPU or RAM a process can use.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 10: Performance Tuning & Hardening -->
+            <section id="performance">
+                <div class="section-header">
+                    <h2>Performance Tuning & Hardening</h2>
+                    <p>Squeezing every drop of power out of your hardware while keeping it safe.</p>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <h3>31. Tuning with sysctl</h3>
+                        <p class="answer">You can change how the Kernel behaves on the fly by editing <code>/etc/sysctl.conf</code>. Want faster networking? Increase the TCP buffer size.</p>
+                        <div class="code-block">
+                            $ sudo sysctl -w net.ipv4.ip_forward=1
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>32. Security Hardening: SELinux & AppArmor</h3>
+                        <p class="answer">These are "Mandatory Access Control" systems. Even if a hacker gets root access, they still can't touch files unless the policy explicitly allows it.</p>
+                        <div class="pro-tip">
+                            <strong>CIS Benchmarks:</strong> The "Bible" of security. It's a massive checklist of settings to make your server bulletproof.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 11: Command Reference -->
+            <section id="commands">
+                <div class="section-header">
+                    <h2>The Ultimate Command Reference</h2>
+                    <p>A quick-access guide to 70+ essential Linux commands for everyday tasks.</p>
+                </div>
+
+                <div class="search-container">
+                    <input type="text" id="commandSearch" placeholder="Search commands, descriptions, or examples...">
+                </div>
+
+                <div class="table-container">
+                    <table id="commandsTable">
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                                <th>Real-world Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>ssh</code></td><td>Connects to a remote machine via SSH.</td><td><code>ssh user@hostname</code></td></tr>
+                            <tr><td><code>ls</code></td><td>Lists directory contents.</td><td><code>ls -l</code></td></tr>
+                            <tr><td><code>pwd</code></td><td>Prints the current working directory.</td><td><code>pwd</code></td></tr>
+                            <tr><td><code>cd</code></td><td>Changes the current directory.</td><td><code>cd /var/log</code></td></tr>
+                            <tr><td><code>touch</code></td><td>Creates an empty file.</td><td><code>touch newfile.txt</code></td></tr>
+                            <tr><td><code>cat</code></td><td>Displays file content.</td><td><code>cat config.json</code></td></tr>
+                            <tr><td><code>mkdir</code></td><td>Creates a new directory.</td><td><code>mkdir project_files</code></td></tr>
+                            <tr><td><code>cp</code></td><td>Copies files or directories.</td><td><code>cp file1.txt file2.txt</code></td></tr>
+                            <tr><td><code>mv</code></td><td>Moves or renames files.</td><td><code>mv old.txt new.txt</code></td></tr>
+                            <tr><td><code>rm</code></td><td>Removes files or directories.</td><td><code>rm -rf temp</code></td></tr>
+                            <tr><td><code>sudo</code></td><td>Executes a command with root privileges.</td><td><code>sudo apt update</code></td></tr>
+                            <tr><td><code>grep</code></td><td>Searches for patterns in files.</td><td><code>grep "error" app.log</code></td></tr>
+                            <tr><td><code>chmod</code></td><td>Changes file permissions.</td><td><code>chmod 755 script.sh</code></td></tr>
+                            <tr><td><code>chown</code></td><td>Changes file owner and group.</td><td><code>chown user:group file.txt</code></td></tr>
+                            <tr><td><code>df</code></td><td>Displays disk space usage.</td><td><code>df -h</code></td></tr>
+                            <tr><td><code>free</code></td><td>Displays memory usage.</td><td><code>free -h</code></td></tr>
+                            <tr><td><code>ps</code></td><td>Displays active processes.</td><td><code>ps aux</code></td></tr>
+                            <tr><td><code>top</code></td><td>Displays real-time resource usage.</td><td><code>top</code></td></tr>
+                            <tr><td><code>htop</code></td><td>Interactive process viewer.</td><td><code>htop</code></td></tr>
+                            <tr><td><code>systemctl</code></td><td>Manages systemd services.</td><td><code>systemctl status nginx</code></td></tr>
+                            <tr><td><code>curl</code></td><td>Transfers data from/to a server.</td><td><code>curl -I google.com</code></td></tr>
+                            <tr><td><code>ping</code></td><td>Tests connectivity.</td><td><code>ping 8.8.8.8</code></td></tr>
+                            <tr><td><code>tail</code></td><td>Shows the end of a file.</td><td><code>tail -f /var/log/syslog</code></td></tr>
+                            <tr><td><code>find</code></td><td>Search for files.</td><td><code>find . -name "*.log"</code></td></tr>
+                            <tr><td><code>history</code></td><td>Shows command history.</td><td><code>history | tail -50</code></td></tr>
+                            <tr><td><code>awk</code></td><td>Pattern scanning and processing language.</td><td><code>awk '{print $2}' data.txt</code></td></tr>
+                            <tr><td><code>sed</code></td><td>Stream editor for filtering/transforming text.</td><td><code>sed 's/old/new/g' file.txt</code></td></tr>
+                            <tr><td><code>find</code></td><td>Search for files.</td><td><code>find /var/log -name "*.log"</code></td></tr>
+                            <tr><td><code>locate</code></td><td>Find files by name (fast).</td><td><code>locate apache2.conf</code></td></tr>
+                            <tr><td><code>diff</code></td><td>Compare files line by line.</td><td><code>diff a.txt b.txt</code></td></tr>
+                            <tr><td><code>uptime</code></td><td>Shows how long the system has been up.</td><td><code>uptime -p</code></td></tr>
+                            <tr><td><code>hostname</code></td><td>Show/set system hostname.</td><td><code>hostname -I</code></td></tr>
+                            <tr><td><code>ip address</code></td><td>Show/manipulate network interfaces.</td><td><code>ip a</code></td></tr>
+                            <tr><td><code>dig</code></td><td>DNS lookup utility.</td><td><code>dig google.com</code></td></tr>
+                            <tr><td><code>nslookup</code></td><td>Query internet name servers.</td><td><code>nslookup 8.8.8.8</code></td></tr>
+                            <tr><td><code>curl</code></td><td>Transfer data with URLs.</td><td><code>curl -v https://api.io</code></td></tr>
+                            <tr><td><code>wget</code></td><td>Network file downloader.</td><td><code>wget https://site.com/file.zip</code></td></tr>
+                            <tr><td><code>scp</code></td><td>Secure copy (remote file copy).</td><td><code>scp file.txt user@ip:/path</code></td></tr>
+                            <tr><td><code>rsync</code></td><td>Fast remote file synchronization.</td><td><code>rsync -avz local/ remote/</code></td></tr>
+                            <tr><td><code>useradd</code></td><td>Create a new user.</td><td><code>sudo useradd -m rohit</code></td></tr>
+                            <tr><td><code>passwd</code></td><td>Change password.</td><td><code>sudo passwd rohit</code></td></tr>
+                            <tr><td><code>usermod</code></td><td>Modify user account.</td><td><code>sudo usermod -aG sudo rohit</code></td></tr>
+                            <tr><td><code>groupadd</code></td><td>Create a new group.</td><td><code>sudo groupadd devops</code></td></tr>
+                            <tr><td><code>crontab</code></td><td>Schedule periodic tasks.</td><td><code>crontab -l</code></td></tr>
+                            <tr><td><code>at</code></td><td>Schedule one-time task.</td><td><code>at 10:00 PM tomorrow</code></td></tr>
+                            <tr><td><code>journalctl</code></td><td>Check systemd logs.</td><td><code>journalctl -xe</code></td></tr>
+                            <tr><td><code>dmesg</code></td><td>Kernel ring buffer messages.</td><td><code>dmesg | grep -i usb</code></td></tr>
+                            <tr><td><code>mount</code></td><td>Mount a filesystem.</td><td><code>sudo mount /dev/sdb1 /mnt</code></td></tr>
+                            <tr><td><code>lsblk</code></td><td>List block devices.</td><td><code>lsblk -f</code></td></tr>
+                            <tr><td><code>apt</code></td><td>Package manager (Debian/Ubuntu).</td><td><code>sudo apt install git</code></td></tr>
+                            <tr><td><code>dnf</code></td><td>Package manager (CentOS/RHEL).</td><td><code>sudo dnf update</code></td></tr>
+                            <tr><td><code>which</code></td><td>Locate a command.</td><td><code>which python3</code></td></tr>
+                            <tr><td><code>alias</code></td><td>Create a shortcut.</td><td><code>alias ll='ls -la'</code></td></tr>
+                            <tr><td><code>export</code></td><td>Set environment variable.</td><td><code>export HOST=production</code></td></tr>
+                            <tr><td><code>exit</code></td><td>Exit the shell.</td><td><code>exit</code></td></tr>
+                            <tr><td><code>reboot</code></td><td>Restarts the system.</td><td><code>sudo reboot</code></td></tr>
+                            <tr><td><code>shutdown</code></td><td>Turns off the system.</td><td><code>sudo shutdown -h now</code></td></tr>
+                            <tr><td><code>neofetch</code></td><td>System info with aesthetic layout.</td><td><code>neofetch</code></td></tr>
+                            <tr><td><code>unzip</code></td><td>Extract ZIP files.</td><td><code>unzip archive.zip</code></td></tr>
+                            <tr><td><code>sort</code></td><td>Sort lines of text.</td><td><code>sort -r file.txt</code></td></tr>
+                            <tr><td><code>uniq</code></td><td>Remove duplicate lines.</td><td><code>sort file | uniq</code></td></tr>
+                            <tr><td><code>wc</code></td><td>Count lines, words, bytes.</td><td><code>wc -l logs.txt</code></td></tr>
+                            <tr><td><code>traceroute</code></td><td>Trace route to host.</td><td><code>traceroute google.com</code></td></tr>
+                            <tr><td><code>iptables</code></td><td>IPv4 packet filtering.</td><td><code>sudo iptables -L</code></td></tr>
+                            <tr><td><code>ufw</code></td><td>Uncomplicated Firewall.</td><td><code>sudo ufw enable</code></td></tr>
+                            <tr><td><code>free</code></td><td>Memory usage.</td><td><code>free -h</code></td></tr>
+                            <tr><td><code>whoami</code></td><td>Current user name.</td><td><code>whoami</code></td></tr>
+                            <tr><td><code>ping</code></td><td>Check network connection.</td><td><code>ping -c 4 google.com</code></td></tr>
+                            <tr><td><code>tar</code></td><td>Archive files into a tarball.</td><td><code>tar -cvf backup.tar /data</code></td></tr>
+                            <tr><td><code>finger</code></td><td>User info lookup.</td><td><code>finger rohit</code></td></tr>
+                            <tr><td><code>whatis</code></td><td>Single line manual description.</td><td><code>whatis ls</code></td></tr>
+                            <tr><td><code>cmp</code></td><td>Compare two files byte by byte.</td><td><code>cmp f1 f2</code></td></tr>
+                            <tr><td><code>zip</code></td><td>Compress files into ZIP.</td><td><code>zip -r files.zip ./dir</code></td></tr>
+                            <tr><td><code>chgrp</code></td><td>Change group ownership.</td><td><code>chgrp dev file.txt</code></td></tr>
+                            <tr><td><code>shred</code></td><td>Securely delete a file.</td><td><code>shred -u secret.txt</code></td></tr>
+                            <tr><td><code>su</code></td><td>Switch user.</td><td><code>su - user2</code></td></tr>
+                            <tr><td><code>visudo</code></td><td>Edit sudoers file safely.</td><td><code>sudo visudo</code></td></tr>
+                            <tr><td><code>cal</code></td><td>Show calendar.</td><td><code>cal 2026</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Linux & DevOps Mastery Guide. Designed for Excellence.</p>
+    </footer>
+
+    <button id="backToTop" title="Back to Top">↑</button>
+
+    <script>
+        // Simple reveal animation on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => observer.observe(section));
+
+        // Back to Top Logic
+        const btt = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                btt.classList.add('show');
+            } else {
+                btt.classList.remove('show');
+            }
+        });
+        btt.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Command Search Logic
+        const searchInput = document.getElementById('commandSearch');
+        const table = document.getElementById('commandsTable');
+        const rows = table.getElementsByTagName('tr');
+
+        searchInput.addEventListener('input', function() {
+            const filter = searchInput.value.toLowerCase();
+            for (let i = 1; i < rows.length; i++) {
+                const text = rows[i].textContent.toLowerCase();
+                rows[i].style.display = text.includes(filter) ? '' : 'none';
+            }
+        });
+
+        // Copy to Clipboard Logic
+        document.querySelectorAll('#commandsTable tr').forEach((row, index) => {
+            if (index === 0) return; // Skip header
+            const exampleCell = row.cells[2];
+            const code = exampleCell.querySelector('code');
+            if (code) {
+                const btn = document.createElement('button');
+                btn.className = 'copy-btn';
+                btn.innerText = 'Copy';
+                btn.onclick = () => {
+                    navigator.clipboard.writeText(code.innerText);
+                    btn.innerText = 'Copied!';
+                    setTimeout(() => btn.innerText = 'Copy', 2000);
+                };
+                exampleCell.appendChild(btn);
+            }
+        });
+    </script>
+</body>
+</html>
