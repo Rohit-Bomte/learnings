@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Networking & Infrastructure | Masterclass Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4338ca;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg: #0b0f1a;
+            --sidebar-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --code-bg: #000000;
+            --glass: rgba(30, 41, 59, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.7;
+            display: flex;
+        }
+
+        /* Sidebar Navigation */
+        aside {
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        aside .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        aside ul {
+            list-style: none;
+        }
+
+        aside li {
+            margin-bottom: 0.5rem;
+        }
+
+        aside a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: block;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        aside a:hover,
+        aside a.active {
+            background: var(--primary-dark);
+            color: white;
+            padding-left: 1.5rem;
+        }
+
+        aside .menu-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            margin: 2rem 0 1rem;
+            font-weight: 700;
+        }
+
+        /* Main Content */
+        main {
+            margin-left: 280px;
+            flex: 1;
+            padding: 4rem 6rem;
+            max-width: 1200px;
+        }
+
+        header {
+            margin-bottom: 5rem;
+        }
+
+        header h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+        }
+
+        header .badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary-light);
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        section {
+            margin-bottom: 8rem;
+            scroll-margin-top: 50px;
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary);
+        }
+
+        h4 {
+            font-size: 1.3rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Technical Callouts */
+        .callout {
+            background: var(--card-bg);
+            border-left: 4px solid var(--primary);
+            padding: 2rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .callout-title {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .pro-con-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .pro-box {
+            color: var(--secondary);
+        }
+
+        .con-box {
+            color: #ef4444;
+        }
+
+        /* Card Layout */
+        .engine-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .engine-card .engine-type {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Tables & Lists */
+        ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            list-style-type: square;
+        }
+
+        ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.75rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #111827;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Code & Syntax */
+        pre {
+            background: var(--code-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+        }
+
+        .mermaid {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin: 3rem 0;
+        }
+
+        /* Tags */
+        .tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 700;
+            position: relative;
+            top: -3px;
+        }
+
+        .tag-core {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .tag-special {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            aside {
+                display: none;
+            }
+
+            main {
+                margin-left: 0;
+                padding: 2rem;
+            }
+
+            header h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside>
+        <div class="brand">Engineering.Mastery</div>
+
+        <div class="menu-label">Topic Essentials</div>
+        <ul>
+            <li><a href="#intro" class="active">Introduction</a></li>
+            <li><a href="#network">What is a Network?</a></li>
+            <li><a href="#servers">Servers Explained</a></li>
+        </ul>
+
+        <div class="menu-label">Addressing & Routing</div>
+        <ul>
+            <li><a href="#ip-mac">IP & MAC Addresses</a></li>
+            <li><a href="#dns">DNS: Internet's Phonebook</a></li>
+        </ul>
+
+        <div class="menu-label">Virtual Infrastructure</div>
+        <ul>
+            <li><a href="#hypervisor-vm">Hypervisors & VMs</a></li>
+            <li><a href="#docker">Docker: Containerization</a></li>
+            <li><a href="#kubernetes">Kubernetes: Orchestration</a></li>
+        </ul>
+
+        <div class="menu-label">Security Layer</div>
+        <ul>
+            <li><a href="#firewall">Firewalls</a></li>
+            <li><a href="#security-groups">Security Groups</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <header id="intro">
+            <span class="badge">Masterclass Module</span>
+            <h1>From Cables to Kubernetes: The Networking Masterclass</h1>
+            <p>This guide is designed for someone who has <strong>zero networking knowledge</strong>. We start from
+                the most basic question—"What is a Network?"—and build our way up to Cloud Security and Container
+                Orchestration. Every concept is explained with real-world analogies <em>first</em>, then we dig into the
+                technical "physics" underneath.</p>
+        </header>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 1: WHAT IS A NETWORK? -->
+        <!-- ============================================================ -->
+        <section id="network">
+            <h2>1. What is a Network?</h2>
+            <p>Before we talk about servers, IPs, or the cloud, we need to answer the most fundamental question.</p>
+
+            <div class="callout">
+                <span class="callout-title">The Simplest Definition</span>
+                A <strong>Network</strong> is just two or more devices connected to each other so they can share
+                information. That's it. When you connect your phone to your home Wi-Fi and browse the internet, your
+                phone and the Wi-Fi router have formed a tiny network.
+            </div>
+
+            <h3>The Restaurant Analogy</h3>
+            <p>Imagine a restaurant. The <strong>Kitchen</strong> (which prepares food) is one device. The
+                <strong>Tables</strong> (where customers sit) are other devices. The <strong>Waiters</strong> carrying
+                food between the kitchen and the tables are the <strong>Network Links</strong>. Without the waiters
+                (the network), the food (data) would never reach you.
+            </p>
+
+            <div class="engine-card">
+                <span class="engine-type">Deep Dive: The Internal Physics</span>
+                <h3>Nodes, Links, and Protocols</h3>
+                <p>Every network in the world, from your home Wi-Fi to the entire Internet, is built from just three
+                    building blocks:</p>
+                <ol>
+                    <li><strong>Nodes:</strong> Any device on the network. Your laptop, your phone, a printer, a smart
+                        fridge—if it's connected, it's a Node.</li>
+                    <li><strong>Links:</strong> The connection between two nodes. This can be a physical cable (like the
+                        Ethernet cable plugged into your router) or invisible radio waves (like Wi-Fi or Bluetooth).
+                    </li>
+                    <li><strong>Protocols:</strong> The "language" that devices agree to speak. If your laptop speaks
+                        English and the server speaks French, they can't communicate. A protocol like <strong>TCP/IP
+                        </strong> is the universal translator that every device on the internet agrees to use.</li>
+                </ol>
+
+                <div class="mermaid">
+                    graph LR
+                    A["Your Laptop"] -->|Wi-Fi Link| B["Home Router"]
+                    B -->|Fiber Cable| C(("The Internet"))
+                    C -->|Undersea Cable| D["Google's Server"]
+
+                    style A fill:#6366f1,stroke:#1e293b,stroke-width:2px,color:#fff
+                    style B fill:#10b981,stroke:#1e293b,stroke-width:2px,color:#fff
+                    style D fill:#f59e0b,stroke:#1e293b,stroke-width:2px,color:#fff
+                </div>
+                <p style="text-align:center; color: var(--text-muted); font-size: 0.9rem;">⬆ A simplified view of how your laptop connects to Google. Each box is a <strong>Node</strong>, each arrow is a <strong>Link</strong>.</p>
+            </div>
+
+            <h3>Types of Networks (From Small to Planet-Sized)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>What it means</th>
+                        <th>Real-World Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>LAN</strong> (Local Area Network)</td>
+                        <td>A network inside one building or room. Small, fast, private.</td>
+                        <td>Your home Wi-Fi connecting your phone, laptop, and smart TV.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>WAN</strong> (Wide Area Network)</td>
+                        <td>A network that spans a large geographical area—cities, countries, or the entire planet.</td>
+                        <td>The Internet itself is the world's largest WAN.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>WLAN</strong> (Wireless LAN)</td>
+                        <td>Simply a LAN that uses radio waves instead of physical cables.</td>
+                        <td>The Wi-Fi network in a coffee shop.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2: SERVERS -->
+        <!-- ============================================================ -->
+        <section id="servers">
+            <h2>2. What is a Server?</h2>
+            <p>You hear the word "Server" everywhere. But what <em>actually</em> is it?</p>
+
+            <div class="callout">
+                <span class="callout-title">The Simplest Definition</span>
+                A <strong>Server</strong> is just a computer. That's it. The only difference between your personal
+                laptop and a "Server" is <strong>its job</strong>. Your laptop is designed for <em>you</em> to use (browsing, 
+                typing documents). A Server is designed to <strong>serve</strong> data or services to
+                <em>other computers</em> (called <strong>Clients</strong>) over a network.
+            </div>
+
+            <h3>The Restaurant Analogy (Continued)</h3>
+            <p>Remember our restaurant? The <strong>Kitchen</strong> is the Server. It doesn't eat the food itself—it
+                <em>prepares</em> and <em>serves</em> it to whoever orders (the Clients at the tables). Your web
+                browser (like Chrome) is the "customer." When you type <code>google.com</code>, Chrome sends an order
+                to Google's kitchen (server), and Google's server sends back the webpage.
+            </p>
+
+            <div class="engine-card">
+                <span class="engine-type">Deep Dive: The Internal Physics</span>
+                <h3>How a Server Actually Works</h3>
+                <p>A server is always <strong>"listening"</strong>. Imagine a phone operator sitting by the phone 24/7
+                    waiting for calls. A web server runs a special software (like <strong>Nginx</strong> or
+                    <strong>Apache</strong>) that "listens" on a specific <strong>Port Number</strong> (think of a port
+                    as a door number on a building). When a request arrives at that door, it processes it and sends back
+                    a response.
+                </p>
+
+                <div class="mermaid">
+                    sequenceDiagram
+                        participant Y as Your Browser
+                        participant S as Google Server
+                        Y->>S: "Hey, give me the homepage (Port 443)"
+                        Note over S: Server processes the request
+                        S-->>Y: "Here is the HTML, CSS, JS for the page"
+                        Note over Y: Browser renders the page on your screen
+                </div>
+            </div>
+
+            <h3>Types of Servers</h3>
+            <p>Just like restaurants can specialise in different cuisines, servers specialise in different jobs:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Server Type</th>
+                        <th>What it Does</th>
+                        <th>Example Software</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Web Server</strong></td>
+                        <td>Hosts websites and serves web pages to your browser.</td>
+                        <td>Nginx, Apache</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Database Server</strong></td>
+                        <td>Stores and manages structured data (user accounts, products, orders).</td>
+                        <td>PostgreSQL, MySQL</td>
+                    </tr>
+                    <tr>
+                        <td><strong>File Server</strong></td>
+                        <td>Stores files (documents, photos, videos) and lets users on the network access them.</td>
+                        <td>Windows File Server, NFS</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Application Server</strong></td>
+                        <td>Runs the "backend brains" of an app (business logic, calculations).</td>
+                        <td>Node.js, Django, Spring Boot</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 3: IP & MAC ADDRESSES -->
+        <!-- ============================================================ -->
+        <section id="ip-mac">
+            <h2>3. Addressing: IP & MAC Addresses</h2>
+            <p>For data to go from your laptop to a server, the network needs to know <strong>who</strong> you are and
+                <strong>where</strong> you are. This is solved by two types of addresses.
+            </p>
+
+            <div class="engine-card">
+                <span class="engine-type">The Two Identities</span>
+                <h3>MAC Address: Your Fingerprint</h3>
+                <div class="callout">
+                    <span class="callout-title">Beginner Analogy: Your Aadhaar Card / Social Security Number</span>
+                    Your <strong>MAC Address</strong> (Media Access Control) is like your Aadhaar Card number. It is a
+                    <strong>permanent, physical identity</strong> that is burned into the hardware of your network card
+                    (NIC) by the manufacturer at the factory. It <strong>never changes</strong>, no matter which
+                    network you connect to.
+                </div>
+                <ul>
+                    <li><strong>Format:</strong> Six pairs of hexadecimal characters, like
+                        <code>00:1A:2B:3C:4D:5E</code>.
+                    </li>
+                    <li><strong>Scope:</strong> Used only for <strong>local communication</strong>. Your laptop uses its
+                        MAC address to talk to the Wi-Fi router sitting in the same room. The MAC address is NOT used
+                        to reach Google's server across the world.</li>
+                    <li><strong>Layer:</strong> Operates at <strong>Layer 2 (Data Link Layer)</strong> of the OSI model.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="engine-card">
+                <h3>IP Address: Your Home Address</h3>
+                <div class="callout" style="border-left-color: var(--secondary);">
+                    <span class="callout-title">Beginner Analogy: Your Mailing/Postal Address</span>
+                    Your <strong>IP Address</strong> (Internet Protocol) is like your home postal address. It tells the
+                    network <strong>where you are currently located</strong> so that data packets (like letters) can be
+                    <strong>routed</strong> to you from anywhere in the world. If you move to a new house (connect to a
+                    new Wi-Fi), you get a new postal address (new IP).
+                </div>
+                <ul>
+                    <li><strong>Format (IPv4):</strong> Four numbers separated by dots, e.g.,
+                        <code>192.168.1.105</code>. Each number ranges from 0 to 255.
+                    </li>
+                    <li><strong>Format (IPv6):</strong> A much longer address created because the world ran out of IPv4
+                        addresses (only ~4.3 billion possible). Example:
+                        <code>2001:0db8:85a3:0000:0000:8a2e:0370:7334</code>.
+                    </li>
+                    <li><strong>Scope:</strong> Used for <strong>global communication</strong>. This is how data
+                        is routed across the entire internet from India to the USA.</li>
+                    <li><strong>Layer:</strong> Operates at <strong>Layer 3 (Network Layer)</strong> of the OSI model.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="engine-card">
+                <h3>How They Work Together (The Full Picture)</h3>
+                <p>When you visit <code>google.com</code>, your data doesn't magically teleport. It hops from device
+                    to device:
+                </p>
+                <div class="mermaid">
+                    sequenceDiagram
+                        participant L as Your Laptop
+                        participant R as Wi-Fi Router
+                        participant I as The Internet
+                        participant G as Google Server
+                        L->>R: Hop 1: Uses MAC Address
+                        Note over L,R: "Hey Router (MAC XX:XX), forward this packet"
+                        R->>I: Hop 2: Uses IP Address
+                        Note over R,I: "Route this to IP 142.250.190.46"
+                        I->>G: Hop 3-20: Multiple routers forward using IP
+                        G-->>L: Response travels back the same way
+                </div>
+                <p style="text-align:center; color: var(--text-muted); font-size: 0.9rem;">⬆ <strong>MAC</strong> is used for the first local hop. <strong>IP</strong> is used for every hop across the internet.</p>
+
+                <div class="callout">
+                    <span class="callout-title">Why do we need BOTH?</span>
+                    Think of it like sending a letter. You write the <strong>destination postal address</strong> (IP
+                    Address) on the envelope. But to physically hand it to the postman, you walk to your local <strong>
+                        post office</strong> (the router), and the post office identifies you by your <strong>ID
+                        card</strong> (MAC Address). The IP gets the letter across the country; the MAC gets it across
+                    the room.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 4: DNS -->
+        <!-- ============================================================ -->
+        <section id="dns">
+            <h2>4. DNS: The Internet's Phonebook</h2>
+            <p>We just learned that every server on the internet has an IP address like <code>142.250.190.46</code>.
+                But nobody remembers numbers like that. You remember <code>google.com</code>. The system that
+                translates a human-friendly name into a machine-friendly IP address is called <strong>DNS</strong>
+                (Domain Name System).</p>
+
+            <div class="callout">
+                <span class="callout-title">Beginner Analogy: The Phonebook</span>
+                Imagine an old-school phone book. You know your friend's <strong>name</strong> ("Rahul"), but your
+                phone needs his <strong>number</strong> (9876543210) to make the call. You look up "Rahul" in the
+                phonebook and find the number. DNS does exactly this—you give it a name (<code>google.com</code>), and
+                it gives you back the number (<code>142.250.190.46</code>).
+            </div>
+
+            <div class="engine-card">
+                <span class="engine-type">Deep Dive: The Internal Physics</span>
+                <h3>How DNS Resolution Works Step-by-Step</h3>
+                <p>When you type <code>www.flipkart.com</code> in your browser and press Enter, here is what happens
+                    behind the scenes in a fraction of a second:</p>
+
+                <div class="mermaid">
+                    sequenceDiagram
+                        actor U as You
+                        participant B as Browser Cache
+                        participant R as ISP DNS Resolver
+                        participant Root as Root Name Server
+                        participant TLD as .com TLD Server
+                        participant Auth as flipkart.com Auth Server
+
+                        U->>B: Type www.flipkart.com
+                        B-->>U: "Not in my cache"
+                        U->>R: "What is the IP for flipkart.com?"
+                        R->>Root: "Who manages .com domains?"
+                        Root-->>R: "Ask the .com TLD server at IP X"
+                        R->>TLD: "Who manages flipkart.com?"
+                        TLD-->>R: "Ask Flipkart's own auth server at IP Y"
+                        R->>Auth: "What is the IP for www.flipkart.com?"
+                        Auth-->>R: "It is 163.53.78.12"
+                        R-->>U: "Connect to 163.53.78.12!"
+                </div>
+                <p style="text-align:center; color: var(--text-muted); font-size: 0.9rem;">⬆ The DNS resolution chain. This entire process happens in about 20-100 milliseconds.</p>
+
+                <h4>Breaking Down Each Player:</h4>
+                <ol>
+                    <li><strong>Browser Cache:</strong> Your browser remembers IPs of sites you recently visited.
+                        If you visited Flipkart 5 minutes ago, it doesn't need to ask again.</li>
+                    <li><strong>ISP's DNS Resolver:</strong> Your Internet Service Provider (like Jio or Airtel) runs a
+                        special server called a "Resolver." It's like your personal research assistant that does all
+                        the legwork of asking around.</li>
+                    <li><strong>Root Name Servers:</strong> There are only <strong>13 sets</strong> of Root Servers in
+                        the world (managed by organisations like ICANN). They don't know specific websites, but they
+                        know which server to ask next based on the ending (.com, .in, .org).</li>
+                    <li><strong>TLD Servers:</strong> Top-Level Domain servers manage all domains ending in .com, .in,
+                        .org, etc. The .com TLD server knows the "Authoritative Server" for flipkart.com.</li>
+                    <li><strong>Authoritative Name Server:</strong> This is Flipkart's own DNS server. It has the final
+                        answer: "www.flipkart.com is at this exact IP: 163.53.78.12."</li>
+                </ol>
+            </div>
+
+            <div class="callout">
+                <span class="callout-title">Why DNS Matters for Engineers</span>
+                DNS isn't just a phonebook—it's a <strong>control panel</strong>. If your web server crashes, you can
+                instantly update the DNS record to point <code>yourapp.com</code> to a backup server. The users
+                keep using the same name and never know the underlying infrastructure changed. This is how companies
+                achieve <strong>zero-downtime deployments</strong>.
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 5: HYPERVISORS & VIRTUAL MACHINES -->
+        <!-- ============================================================ -->
+        <section id="hypervisor-vm">
+            <h2>5. Virtual Machines & Hypervisors</h2>
+            <p>In the early days of computing, if a company needed to run 3 different applications, they bought 3
+                physical servers—one for each app. This was <strong>incredibly wasteful</strong>, because each server
+                typically used only 10-15% of its CPU power. The rest sat idle. <strong>Virtualization</strong> solved
+                this problem.</p>
+
+            <div class="callout">
+                <span class="callout-title">Beginner Analogy: The Apartment Building</span>
+                Imagine you own a massive piece of land (a physical server). Instead of building one tiny house on it
+                and wasting all that space, you build an <strong>apartment building</strong>. Each apartment (a
+                <strong>Virtual Machine</strong>) is completely separate—different families, different locks, different
+                interiors. But they all share the same foundation, plumbing, and electricity. The <strong>property
+                    manager</strong> who divides the building into apartments and manages resources is the
+                <strong>Hypervisor</strong>.
+            </div>
+
+            <div class="engine-card">
+                <span class="engine-type">Deep Dive: The Internal Physics</span>
+                <h3>What is a Virtual Machine (VM)?</h3>
+                <p>A <strong>Virtual Machine</strong> is a software-based, completely fake computer created inside a
+                    real, physical computer. It behaves <em>exactly</em> like a real computer—it has its own Operating
+                    System (Windows, Linux), its own allocated RAM, its own hard disk space, and its own network card.
+                    But it's all an illusion created by software.</p>
+
+                <div class="callout">
+                    <span class="callout-title">Key Point: Complete Isolation</span>
+                    If VM-1 gets a virus and crashes, VM-2 and VM-3 running on the same physical machine are <strong>
+                        completely untouched</strong>. They don't even know each other exists. This isolation is the
+                    primary reason companies love VMs.
+                </div>
+            </div>
+
+            <div class="engine-card">
+                <h3>What is a Hypervisor?</h3>
+                <p>The <strong>Hypervisor</strong> (also called a <strong>Virtual Machine Monitor</strong>) is the
+                    magical software layer that makes all of this possible. It sits between the physical hardware and
+                    the virtual machines, and its job is to <strong>divide up the real hardware</strong> (CPU, RAM,
+                    Storage) among the VMs.</p>
+
+                <h4>Type 1: Bare-Metal Hypervisor (The Professional)</h4>
+                <div class="callout">
+                    <span class="callout-title">Runs directly on hardware. No host OS underneath.</span>
+                    This is what companies like Amazon (AWS) and Microsoft (Azure) use in their massive data centers.
+                    There is <strong>no Windows or Linux</strong> underneath—the Hypervisor IS the operating system.
+                    This makes it extremely fast and efficient.
+                    <br><br>
+                    <strong>Examples:</strong> VMware ESXi, Microsoft Hyper-V, Proxmox VE.
+                </div>
+
+                <h4>Type 2: Hosted Hypervisor (The Student/Developer)</h4>
+                <div class="callout" style="border-left-color: var(--secondary);">
+                    <span class="callout-title">Runs as an app on top of your existing OS.</span>
+                    This is what you use on your personal laptop. You install VirtualBox on your Windows machine, and
+                    then create a Linux VM inside it. The VM request goes through your Windows OS first, then to the
+                    hardware—making it slightly slower.
+                    <br><br>
+                    <strong>Examples:</strong> Oracle VirtualBox, VMware Workstation, Parallels Desktop (Mac).
+                </div>
+
+                <div class="mermaid">
+                    graph TD
+                        subgraph Type1 ["Type 1: Bare-Metal"]
+                            VM1["VM 1 (Linux)"] --> HV1["Hypervisor (ESXi)"]
+                            VM2["VM 2 (Windows)"] --> HV1
+                            VM3["VM 3 (Linux)"] --> HV1
+                            HV1 --> HW1["Physical Hardware (CPU, RAM, Disk)"]
+                        end
+                        subgraph Type2 ["Type 2: Hosted"]
+                            VM4["VM (Ubuntu)"] --> HV2["Hypervisor (VirtualBox)"]
+                            HV2 --> HOST["Host OS (Your Windows/Mac)"]
+                            HOST --> HW2["Physical Hardware"]
+                        end
+                        style HV1 fill:#6366f1,color:#fff
+                        style HV2 fill:#10b981,color:#fff
+                        style HOST fill:#f59e0b,color:#fff
+                </div>
+                <p style="text-align:center; color: var(--text-muted); font-size: 0.9rem;">⬆ <strong>Type 1</strong> has NO host OS (more efficient). <strong>Type 2</strong> sits ON TOP of a host OS (easier for personal use).</p>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 6: DOCKER -->
+        <!-- ============================================================ -->
+        <section id="docker">
+            <h2>6. Docker: Containerization</h2>
+            <p>Virtual Machines solved the "one server, one app" problem beautifully. But VMs have a massive
+                drawback: <strong>each VM carries an entire Operating System</strong>. That Guest OS can be 2-10 GB
+                in size and takes minutes to boot. What if we could get the benefits of isolation without the
+                weight of a full OS? Enter <strong>Containers</strong>.</p>
+
+            <div class="callout">
+                <span class="callout-title">Beginner Analogy: Shipping Containers on a Cargo Ship</span>
+                Before shipping containers were invented, goods were loaded onto cargo ships in random boxes and bags.
+                Unloading was slow and chaotic. Then someone invented the <strong>standard shipping container</strong>
+                —a uniform metal box. You could pack anything inside, and it would fit on any truck, train, or ship
+                in the world. Docker did the same for software: it packages your code, its libraries, and its
+                settings into a <strong>standard container</strong> that runs identically on any machine.
+            </div>
+
+            <div class="engine-card">
+                <span class="engine-type">Deep Dive: The Internal Physics</span>
+                <h3>VMs vs Containers: The Critical Difference</h3>
+                <p>The key insight is <strong>what gets virtualized</strong>:</p>
+                <ul>
+                    <li><strong>VM:</strong> Virtualizes the <strong>entire hardware machine</strong>. Each VM runs a
+                        full Guest OS (Windows, Linux). Heavy. Slow to start.</li>
+                    <li><strong>Container:</strong> Virtualizes only the <strong>operating system</strong>. All
+                        containers on a machine <strong>share the host machine's OS Kernel</strong>. No Guest OS.
+                        Lightweight. Starts in under 1 second.</li>
+                </ul>
+
+                <div class="mermaid">
+                    graph TD
+                        subgraph VMApproach ["Traditional VMs (Heavy)"]
+                            A1["App A"] --> OS1["Full Guest OS (4 GB)"]
+                            A2["App B"] --> OS2["Full Guest OS (4 GB)"]
+                            OS1 --> HYP["Hypervisor"]
+                            OS2 --> HYP
+                            HYP --> PHYS1["Hardware"]
+                        end
+                        subgraph ContainerApproach ["Docker Containers (Light)"]
+                            C1["App A Container (200 MB)"] --> DOCK["Docker Engine"]
+                            C2["App B Container (200 MB)"] --> DOCK
+                            DOCK --> KERNEL["Shared Host OS Kernel"]
+                            KERNEL --> PHYS2["Hardware"]
+                        end
+                        style HYP fill:#ef4444,color:#fff
+                        style DOCK fill:#10b981,color:#fff
+                </div>
+                <p style="text-align:center; color: var(--text-muted); font-size: 0.9rem;">⬆ VMs carry a full OS per app (heavy). Containers share one OS kernel (light).</p>
+            </div>
+
+            <div class="engine-card">
+                <h3>Docker's Core Vocabulary</h3>
+                <p>To use Docker, you need to understand 4 terms. Think of it like building a house:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Docker Term</th>
+                            <th>What It Is</th>
+                            <th>Analogy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Dockerfile</strong></td>
+                            <td>A text file with step-by-step instructions to build your app's environment.</td>
+                            <td>The <strong>architect's blueprint</strong> that lists every material and step needed.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Docker Image</strong></td>
+                            <td>A read-only snapshot built from the Dockerfile. Contains code + dependencies + config.</td>
+                            <td>The <strong>finalised building plan</strong> approved and ready for construction.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Docker Container</strong></td>
+                            <td>A running instance of an Image. This is your live, executing application.</td>
+                            <td>The <strong>actual house</strong> built from the plan. You can build many identical
+                                houses from one plan.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Docker Hub</strong></td>
+                            <td>An online marketplace where people share pre-built Images (like an app store for code).</td>
+                            <td>A <strong>blueprint library</strong> where you can download tested plans for free.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Example: What a Dockerfile Looks Like</h4>
+                <pre><code># Start from an official Python base image
+FROM python:3.11-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy your project files into the container
+COPY . .
+
+# Install your Python dependencies
+RUN pip install -r requirements.txt
+
+# Tell Docker: "When this container starts, run this command"
+CMD ["python", "app.py"]</code></pre>
+                <p>This file tells Docker: "Take a clean Python 3.11 environment, copy my code into it, install
+                    dependencies, and run <code>app.py</code>." The result is a container that runs <em>identically</em>
+                    on your laptop, your colleague's laptop, and a cloud server in Singapore.</p>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 7: KUBERNETES -->
+        <!-- ============================================================ -->
+        <section id="kubernetes">
+            <h2>7. Kubernetes: Container Orchestration</h2>
+            <p>Docker is brilliant for running <strong>one container</strong> on <strong>one machine</strong>. But what
+                happens when your app grows? Netflix runs <strong>thousands</strong> of containers across
+                <strong>hundreds</strong> of servers worldwide. Who manages all of that? Who decides which server runs
+                which container? Who restarts a container if it crashes at 3 AM? The answer is <strong>Kubernetes
+                </strong>(often abbreviated as <strong>K8s</strong>).
+            </p>
+
+            <div class="callout">
+                <span class="callout-title">Beginner Analogy: The Orchestra Conductor</span>
+                Imagine a massive orchestra with 200 musicians (containers). Each musician can play their instrument
+                (run their app) perfectly on their own. But without a <strong>conductor</strong>, they'd play at
+                different speeds, in different keys, and it would be chaos. <strong>Kubernetes is the conductor</strong>.
+                It tells each musician when to play, replaces a musician who faints (container crashes), and can even
+                bring in extra musicians (auto-scaling) if the audience grows.
+            </div>
+
+            <div class="engine-card">
+                <span class="engine-type">Deep Dive: The Internal Physics</span>
+                <h3>What Kubernetes Actually Does</h3>
+                <p>Kubernetes automates the hardest parts of running containers at scale:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>What It Does</th>
+                            <th>Why It Matters</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Self-Healing</strong></td>
+                            <td>If a container crashes, K8s detects it within seconds and automatically starts a new
+                                identical container to replace it.</td>
+                            <td>Your app stays online 24/7 even if individual parts fail.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Load Balancing</strong></td>
+                            <td>Distributes incoming user traffic evenly across all healthy containers.</td>
+                            <td>No single container gets overwhelmed while others sit idle.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Auto-Scaling</strong></td>
+                            <td>Monitors CPU/memory usage. If usage exceeds a threshold (e.g., 80%), it automatically
+                                spins up more containers. When traffic drops, it removes the extras.</td>
+                            <td>You handle a Black Friday sale without manually adding servers.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rolling Updates</strong></td>
+                            <td>Deploys a new version of your app one container at a time, without taking the whole
+                                app offline.</td>
+                            <td>Users never experience downtime during updates.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="mermaid">
+                    graph TD
+                        USER["Users (Millions)"] --> LB["Load Balancer"]
+                        LB --> P1["Pod 1: App Container"]
+                        LB --> P2["Pod 2: App Container"]
+                        LB --> P3["Pod 3: App Container"]
+                        K8S["Kubernetes Control Plane"] -->|Monitors| P1
+                        K8S -->|Monitors| P2
+                        K8S -->|Monitors| P3
+                        K8S -->|"Auto-scales if CPU > 80%"| P4["Pod 4: New Container"]
+
+                        style K8S fill:#6366f1,color:#fff
+                        style LB fill:#f59e0b,color:#fff
+                        style P4 fill:#10b981,color:#fff,stroke-dasharray: 5 5
+                </div>
+                <p style="text-align:center; color: var(--text-muted); font-size: 0.9rem;">⬆ Kubernetes monitors all Pods. If traffic spikes, it auto-creates Pod 4 (shown in green, dashed).</p>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 8: FIREWALLS -->
+        <!-- ============================================================ -->
+        <section id="firewall">
+            <h2>8. Firewalls</h2>
+            <p>Now that we understand networks, servers, and containers, we face a critical question: <strong>How do we
+                    protect them?</strong> A network connected to the internet is like a house with an open front door—
+                anyone can walk in. A <strong>Firewall</strong> is how we lock that door.</p>
+
+            <div class="callout">
+                <span class="callout-title">Beginner Analogy: The Security Guard at a Building</span>
+                Imagine a strict security guard at the entrance of your office building. Every person who wants to enter
+                must show their ID. The guard has a <strong>list of rules</strong>:
+                <ul>
+                    <li>"Employees with ID badges → <strong>Allow</strong>"</li>
+                    <li>"Delivery people registered for today → <strong>Allow</strong>"</li>
+                    <li>"Unknown people with no ID → <strong>Block</strong>"</li>
+                </ul>
+                A Firewall does exactly this for network traffic. It inspects every data packet trying to enter or
+                leave your network and either <strong>allows</strong> or <strong>blocks</strong> it based on rules you
+                define.
+            </div>
+
+            <div class="engine-card">
+                <span class="engine-type">Deep Dive: The Internal Physics</span>
+                <h3>How a Firewall Inspects Traffic</h3>
+                <p>Every data packet on the internet carries metadata—like the sender's IP, destination IP, and
+                    the port number it's trying to access. A firewall reads this metadata and compares it against
+                    its ruleset.</p>
+
+                <h4>Types of Firewalls</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>How it Works</th>
+                            <th>Depth of Inspection</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Packet Filtering</strong></td>
+                            <td>Checks only the "envelope" of each packet (source IP, destination IP, port). Fast,
+                                simple.</td>
+                            <td>Shallow — like checking the address on a letter without reading the contents.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Stateful Inspection</strong></td>
+                            <td>Tracks the "state" of a connection. Knows if a packet is part of an ongoing, already-approved conversation.</td>
+                            <td>Medium — like the guard remembering "this person entered at 9 AM, so they're allowed
+                                to exit at 5 PM."</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Next-Gen (NGFW)</strong></td>
+                            <td>Opens the packet and reads the actual content. Can detect malware, block specific
+                                applications (like BitTorrent), and prevent intrusions.</td>
+                            <td>Deep — like the guard opening your bag and scanning every item inside.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="mermaid">
+                    graph LR
+                        H["Hacker (Port Scan)"] -->|Blocked| FW{"Firewall"}
+                        M["Malware Traffic"] -->|Blocked| FW
+                        U["Employee (Port 443 HTTPS)"] -->|Allowed| FW
+                        FW --> S["Internal Server"]
+
+                        style H fill:#ef4444,color:#fff
+                        style M fill:#ef4444,color:#fff
+                        style FW fill:#6366f1,color:#fff
+                        style U fill:#10b981,color:#fff
+                </div>
+                <p style="text-align:center; color: var(--text-muted); font-size: 0.9rem;">⬆ The firewall sits at the door. Bad traffic is dropped. Approved traffic passes through.</p>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 9: SECURITY GROUPS -->
+        <!-- ============================================================ -->
+        <section id="security-groups">
+            <h2>9. Security Groups (Cloud Firewalls)</h2>
+            <p>A traditional firewall protects an entire building (network). But in the cloud, where you have
+                dozens of Virtual Machines, you need <strong>per-apartment security</strong>. This is what a
+                <strong>Security Group</strong> does.
+            </p>
+
+            <div class="callout">
+                <span class="callout-title">Beginner Analogy: A Lock on Every Apartment Door</span>
+                The building has a main gate (Firewall). But inside the building, each apartment also has its own
+                lock and peephole (Security Group). Even if someone gets past the main gate, they still can't enter
+                Apartment 3B unless Apartment 3B's rules specifically allow them. This is <strong>defense in
+                    depth</strong>.
+            </div>
+
+            <div class="engine-card">
+                <span class="engine-type">Deep Dive: The Internal Physics</span>
+                <h3>How Security Groups Work in the Cloud</h3>
+                <p>Security Groups are used in cloud platforms like <strong>AWS (Amazon Web Services)</strong>,
+                    <strong>Google Cloud (GCP)</strong>, and <strong>Microsoft Azure</strong>. They are attached
+                    directly to a specific Virtual Machine or container.
+                </p>
+
+                <h4>The 3 Golden Rules of Security Groups</h4>
+                <ol>
+                    <li><strong>Default Deny:</strong> By default, <strong>ALL inbound traffic is blocked</strong>. If
+                        you don't add a rule saying "allow port 443," nobody in the world can connect to your VM on
+                        that port. This is the safest starting point.</li>
+                    <li><strong>Stateful:</strong> If you allow incoming traffic on port 443, the <strong>response</strong>
+                        going back out is <strong>automatically allowed</strong>. You don't need a separate outbound
+                        rule for replies. The security group "remembers" the conversation.</li>
+                    <li><strong>Instance-Level:</strong> A security group is attached to a <strong>specific VM</strong>,
+                        not the entire network. VM-A can allow SSH (port 22) while VM-B on the same network blocks
+                        it entirely.</li>
+                </ol>
+
+                <div class="mermaid">
+                    graph LR
+                        INET["Internet Traffic"] --> FW{"Network Firewall (Edge)"}
+                        FW --> SG1{"Security Group: Web Server"}
+                        FW --> SG2{"Security Group: Database"}
+                        SG1 -->|"Allow 443 (HTTPS)"| WEB["Web Server VM"]
+                        SG1 -->|"Block 22 (SSH)"| X1["Dropped"]
+                        SG2 -->|"Allow 5432 (Postgres)"| DB["Database VM"]
+                        SG2 -->|"Block ALL from Internet"| X2["Dropped"]
+                        WEB -->|"Allow 5432 to DB SG"| DB
+
+                        style FW fill:#6366f1,color:#fff
+                        style SG1 fill:#10b981,color:#fff
+                        style SG2 fill:#f59e0b,color:#fff
+                        style X1 fill:#ef4444,color:#fff
+                        style X2 fill:#ef4444,color:#fff
+                </div>
+                <p style="text-align:center; color: var(--text-muted); font-size: 0.9rem;">⬆ The Web Server allows HTTPS from the internet but blocks SSH. The Database allows connections <strong>only from the Web Server</strong>, never directly from the internet.</p>
+            </div>
+
+            <div class="engine-card">
+                <h3>Firewall vs Security Group: The Summary</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Traditional Firewall</th>
+                            <th>Cloud Security Group</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Scope</strong></td>
+                            <td>Protects the entire network perimeter.</td>
+                            <td>Protects a single VM or container instance.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Location</strong></td>
+                            <td>Sits at the edge/gateway of the network.</td>
+                            <td>Attached directly to the VM's network interface.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Default Behaviour</strong></td>
+                            <td>Varies (can be allow-all or deny-all by default).</td>
+                            <td>Always Deny-All inbound by default.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Statefulness</strong></td>
+                            <td>Can be stateful or stateless.</td>
+                            <td>Always Stateful (responses auto-allowed).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Best For</strong></td>
+                            <td>Stopping external threats at the front door.</td>
+                            <td>Preventing lateral movement <em>inside</em> the network.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer
+            style="margin-top: 10rem; padding: 4rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted);">
+            <p>&copy; 2026 Networking & Infrastructure Masterclass | Created for Rohit's Learning Path</p>
+        </footer>
+
+    </main>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+        // Simple active link tracker
+        const sections = document.querySelectorAll("section, header");
+        const navLi = document.querySelectorAll("aside ul li a");
+        window.addEventListener("scroll", () => {
+            let current = "";
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 60) {
+                    current = section.getAttribute("id");
+                }
+            });
+
+            navLi.forEach((li) => {
+                li.classList.remove("active");
+                if (li.getAttribute("href").includes(current)) {
+                    li.classList.add("active");
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
