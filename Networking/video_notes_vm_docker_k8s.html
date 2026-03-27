@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Notes | VMs, Proxmox, Docker & Kubernetes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4338ca;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg: #0b0f1a;
+            --sidebar-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --code-bg: #000000;
+            --glass: rgba(30, 41, 59, 0.7);
+            --danger: #ef4444;
+            --video-tag: #e879f9;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.7; display: flex; }
+        aside { width: 280px; height: 100vh; background: var(--sidebar-bg); border-right: 1px solid var(--border); position: fixed; padding: 2rem 1.5rem; overflow-y: auto; z-index: 100; }
+        aside .brand { font-size: 1.4rem; font-weight: 700; margin-bottom: 2rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        aside ul { list-style: none; }
+        aside li { margin-bottom: 0.3rem; }
+        aside a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; display: block; padding: 0.6rem 1rem; border-radius: 8px; transition: 0.2s; }
+        aside a:hover, aside a.active { background: var(--primary-dark); color: white; padding-left: 1.5rem; }
+        aside .menu-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); margin: 1.5rem 0 0.8rem; font-weight: 700; }
+        main { margin-left: 280px; flex: 1; padding: 3rem 5rem; max-width: 1100px; }
+        header { margin-bottom: 4rem; }
+        header h1 { font-size: 3.2rem; margin-bottom: 1rem; line-height: 1.1; letter-spacing: -0.04em; }
+        .badge { display: inline-block; background: rgba(99, 102, 241, 0.2); color: var(--primary); padding: 0.4rem 0.9rem; border-radius: 99px; font-weight: 600; font-size: 0.75rem; margin-bottom: 0.8rem; }
+        .video-link { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(232, 121, 249, 0.15); color: var(--video-tag); padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.8rem; text-decoration: none; margin-bottom: 1rem; transition: 0.2s; }
+        .video-link:hover { background: rgba(232, 121, 249, 0.3); }
+        section { margin-bottom: 6rem; scroll-margin-top: 50px; }
+        h2 { font-size: 2.4rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; }
+        h3 { font-size: 1.6rem; margin: 2.5rem 0 1rem; color: var(--primary); }
+        h4 { font-size: 1.2rem; margin: 1.5rem 0 0.8rem; color: var(--secondary); }
+        p { margin-bottom: 1.2rem; font-size: 1.05rem; }
+        .callout { background: var(--card-bg); border-left: 4px solid var(--primary); padding: 1.5rem; border-radius: 0 12px 12px 0; margin: 1.5rem 0; }
+        .callout-title { font-weight: 700; display: block; margin-bottom: 0.4rem; color: var(--primary); }
+        .callout-warn { border-left-color: var(--accent); }
+        .callout-warn .callout-title { color: var(--accent); }
+        .callout-green { border-left-color: var(--secondary); }
+        .callout-green .callout-title { color: var(--secondary); }
+        .engine-card { background: var(--glass); border: 1px solid var(--border); padding: 2rem; border-radius: 16px; margin-bottom: 1.5rem; backdrop-filter: blur(10px); }
+        .engine-type { font-size: 0.75rem; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 0.4rem; display: block; }
+        ul { margin-left: 1.5rem; margin-bottom: 1.2rem; list-style-type: square; }
+        ol { margin-left: 1.5rem; margin-bottom: 1.2rem; }
+        li { margin-bottom: 0.6rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--card-bg); border-radius: 12px; overflow: hidden; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: #111827; font-weight: 700; color: var(--primary); }
+        pre { background: var(--code-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); overflow-x: auto; margin: 1.5rem 0; }
+        code { font-family: 'Fira Code', monospace; font-size: 0.9rem; }
+        .step-box { display: flex; gap: 1rem; margin: 1rem 0; align-items: flex-start; }
+        .step-num { background: var(--primary); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; margin-top: 2px; }
+        .step-content { flex: 1; }
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+        .comparison-grid .engine-card { margin-bottom: 0; }
+        @media (max-width: 1024px) {
+            aside { display: none; }
+            main { margin-left: 0; padding: 2rem; }
+            header h1 { font-size: 2.2rem; }
+            .comparison-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<aside>
+    <div class="brand">📹 Video Notes</div>
+    <div class="menu-label">Video 1 — Virtual Machines</div>
+    <ul>
+        <li><a href="#vm-intro" class="active">What is a VM?</a></li>
+        <li><a href="#vm-why">Why Learn VMs?</a></li>
+        <li><a href="#vm-hypervisors">Type 1 vs Type 2</a></li>
+        <li><a href="#vm-virtualbox">VirtualBox Setup</a></li>
+    </ul>
+    <div class="menu-label">Video 2 — Proxmox</div>
+    <ul>
+        <li><a href="#proxmox-what">What is Proxmox?</a></li>
+        <li><a href="#proxmox-install">Installation Steps</a></li>
+        <li><a href="#proxmox-kali">Kali Linux VM</a></li>
+    </ul>
+    <div class="menu-label">Video 3 — Docker</div>
+    <ul>
+        <li><a href="#docker-problem">The Problem Docker Solves</a></li>
+        <li><a href="#docker-vm-vs-container">VMs vs Containers</a></li>
+        <li><a href="#docker-vocab">Core Vocabulary</a></li>
+        <li><a href="#docker-commands">Essential Commands</a></li>
+    </ul>
+    <div class="menu-label">Video 4 — Kubernetes</div>
+    <ul>
+        <li><a href="#k8s-why">Why Kubernetes?</a></li>
+        <li><a href="#k8s-arch">Architecture</a></li>
+        <li><a href="#k8s-concepts">Pods, Deployments, Services</a></li>
+        <li><a href="#k8s-commands">kubectl Commands</a></li>
+    </ul>
+</aside>
+
+<main>
+    <header>
+        <span class="badge">NetworkChuck Video Notes</span>
+        <h1>VMs → Proxmox → Docker → Kubernetes</h1>
+        <p>Comprehensive notes from 4 videos assigned by your boss. Each section includes <strong>beginner-friendly analogies</strong>, <strong>deep technical explanations</strong>, and <strong>practical commands</strong>.</p>
+    </header>
+
+    <!-- ========== VIDEO 1: VIRTUAL MACHINES ========== -->
+    <section id="vm-intro">
+        <h2>Video 1: Virtual Machines</h2>
+        <a class="video-link" href="https://www.youtube.com/watch?v=wX75Z-4MEoM" target="_blank">▶ NetworkChuck — you need to learn Virtual Machines RIGHT NOW!!</a>
+
+        <h3 id="vm-what">What Exactly is a Virtual Machine?</h3>
+        <div class="callout">
+            <span class="callout-title">🏠 Simple Analogy: A Computer Inside a Computer</span>
+            A Virtual Machine (VM) is a <strong>fake computer</strong> created entirely by software, running inside your <strong>real computer</strong>. It behaves exactly like a separate, independent computer — it has its own operating system, its own desktop, its own files — but it's all an illusion running on your actual hardware.
+        </div>
+
+        <div class="engine-card">
+            <span class="engine-type">Deep Explanation</span>
+            <p>Your physical computer has real hardware: a CPU, RAM, a hard drive. A VM is a software layer that <strong>pretends</strong> to be a set of hardware. The VM's operating system thinks it's running on real hardware, but actually a special software called a <strong>Hypervisor</strong> is intercepting every request and translating it to the real hardware underneath.</p>
+            <p>Think of it like this: your physical computer is a <strong>stage</strong>. The VM is a <strong>play performed on that stage</strong>. The actors (OS, apps) believe they're in a real house, but it's all set pieces managed by the director (hypervisor).</p>
+
+            <h4>Key Properties of a VM:</h4>
+            <ul>
+                <li><strong>Complete isolation:</strong> Each VM is a sealed box. If VM-1 gets a virus, VM-2 is completely untouched.</li>
+                <li><strong>Has its own OS:</strong> You can run Windows inside a Linux machine, or vice versa.</li>
+                <li><strong>Has allocated resources:</strong> You assign it RAM (e.g., 4 GB), CPU cores (e.g., 2), and storage (e.g., 50 GB) from your real machine.</li>
+                <li><strong>Disposable:</strong> You can delete a VM and create a fresh one in minutes. Break it? No problem — just destroy it.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="vm-why">
+        <h3>Why Should You Learn Virtual Machines?</h3>
+        <p>NetworkChuck highlights <strong>3 compelling reasons</strong> why VMs are essential:</p>
+
+        <div class="engine-card">
+            <h4>1. Learning Ethical Hacking Safely</h4>
+            <p>When you practice hacking (on platforms like <strong>TryHackMe</strong> or <strong>Hack The Box</strong>), you use tools that could damage your main OS. VMs create a <strong>safe sandbox</strong> — if something goes wrong, your real computer is untouched. Kali Linux (the hacker's OS) is specifically designed to run inside a VM.</p>
+
+            <h4>2. Try Any Operating System Without Risk</h4>
+            <p>Want to learn Linux but don't want to wipe your Windows? Just create a Linux VM! You can run <strong>Ubuntu, Kali, Fedora, or even macOS</strong> inside a VM without touching your main OS. It's like test-driving a car without buying it.</p>
+
+            <h4>3. Break Things Without Consequences</h4>
+            <p>VMs are the ultimate <strong>playground</strong>. You can:</p>
+            <ul>
+                <li>Experiment with server configurations</li>
+                <li>Test dangerous scripts or malware (safely isolated)</li>
+                <li>Practice system administration without risking real infrastructure</li>
+                <li>Take <strong>snapshots</strong> — a "save point" you can revert to instantly if something breaks</li>
+            </ul>
+        </div>
+
+        <div class="callout callout-warn">
+            <span class="callout-title">⚡ Real-World Use Case</span>
+            Companies use VMs to run <strong>multiple servers on one physical machine</strong>. Instead of buying 10 physical servers (₹50 lakh+), they buy 1 powerful server and create 10 VMs on it. This saves massive costs on hardware, electricity, and space.
+        </div>
+    </section>
+
+    <section id="vm-hypervisors">
+        <h3>Hypervisors: The Magic Behind VMs</h3>
+        <p>The <strong>Hypervisor</strong> is the software that creates and manages VMs. Without it, VMs cannot exist. There are <strong>two types</strong>:</p>
+
+        <div class="comparison-grid">
+            <div class="engine-card">
+                <span class="engine-type">Type 2 — Hosted Hypervisor (For Beginners)</span>
+                <h4>Runs as an App on Your Existing OS</h4>
+                <p>You install it like any other application on Windows/Mac/Linux. It then lets you create VMs inside it.</p>
+                <ul>
+                    <li><strong>Examples:</strong> Oracle VirtualBox (free!), VMware Workstation, Parallels (Mac)</li>
+                    <li><strong>How it works:</strong> VM → Hypervisor App → Host OS → Hardware</li>
+                    <li><strong>Pros:</strong> Easy to set up, great for learning, no special hardware needed</li>
+                    <li><strong>Cons:</strong> Slower because requests must pass through the host OS first</li>
+                </ul>
+                <div class="callout callout-green">
+                    <span class="callout-title">🎯 NetworkChuck's Recommendation</span>
+                    Start with <strong>VirtualBox</strong> — it's free, works on Windows/Mac/Linux, and is the easiest way to get your first VM running.
+                </div>
+            </div>
+
+            <div class="engine-card">
+                <span class="engine-type">Type 1 — Bare-Metal Hypervisor (For Pros)</span>
+                <h4>IS the Operating System (Installed Directly on Hardware)</h4>
+                <p>There is <strong>no Windows or Linux underneath</strong>. The hypervisor itself is installed directly on the bare metal hardware. It has "godlike control" over all resources.</p>
+                <ul>
+                    <li><strong>Examples:</strong> VMware ESXi, Microsoft Hyper-V, <strong>Proxmox VE</strong> (free!)</li>
+                    <li><strong>How it works:</strong> VM → Hypervisor → Hardware (no middleman OS!)</li>
+                    <li><strong>Pros:</strong> Much faster and more efficient; used by AWS, Azure, Google Cloud</li>
+                    <li><strong>Cons:</strong> Needs a dedicated machine; more complex to set up</li>
+                </ul>
+                <div class="callout callout-warn">
+                    <span class="callout-title">💡 Why Faster?</span>
+                    In Type 2, every VM request goes: VM → VirtualBox → Windows → Hardware (3 hops). In Type 1: VM → Proxmox → Hardware (2 hops). Fewer hops = faster.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="vm-virtualbox">
+        <h3>Practical: Setting Up VMs with VirtualBox</h3>
+        <p>NetworkChuck demonstrates creating <strong>Kali Linux</strong> and <strong>Ubuntu</strong> VMs using VirtualBox on Windows 10:</p>
+
+        <div class="engine-card">
+            <div class="step-box"><span class="step-num">1</span><div class="step-content"><strong>Download VirtualBox</strong> from <code>virtualbox.org</code> — it's free and cross-platform.</div></div>
+            <div class="step-box"><span class="step-num">2</span><div class="step-content"><strong>Download the ISO file</strong> of your desired OS (e.g., Kali Linux from <code>kali.org</code>, Ubuntu from <code>ubuntu.com</code>). An ISO is like a DVD image of the operating system.</div></div>
+            <div class="step-box"><span class="step-num">3</span><div class="step-content"><strong>Create a New VM</strong> in VirtualBox: Click "New" → Name it → Select the OS type → Allocate RAM (at least 2-4 GB) → Create a virtual hard disk (25-50 GB).</div></div>
+            <div class="step-box"><span class="step-num">4</span><div class="step-content"><strong>Mount the ISO</strong>: Go to VM Settings → Storage → Click empty disk → Choose the downloaded ISO file.</div></div>
+            <div class="step-box"><span class="step-num">5</span><div class="step-content"><strong>Start the VM</strong> and follow the OS installation wizard — exactly like installing an OS on a real computer.</div></div>
+            <div class="step-box"><span class="step-num">6</span><div class="step-content"><strong>Install Guest Additions</strong> (VirtualBox tools) for better resolution, shared clipboard, and shared folders between host and VM.</div></div>
+        </div>
+    </section>
+
+    <!-- ========== VIDEO 2: PROXMOX ========== -->
+    <section id="proxmox-what">
+        <h2>Video 2: Proxmox (VMs Part 2)</h2>
+        <a class="video-link" href="https://www.youtube.com/watch?v=_u8qTN3cCnQ" target="_blank">▶ NetworkChuck — Virtual Machines Pt. 2 (Proxmox install w/ Kali Linux)</a>
+
+        <h3>What is Proxmox VE?</h3>
+        <div class="callout">
+            <span class="callout-title">🖥️ Simple Analogy: Turning an Old Laptop into a VM Factory</span>
+            Proxmox is a <strong>Type 1 (Bare-Metal) Hypervisor</strong> that you install directly on a computer — replacing its operating system entirely. That computer then becomes a <strong>dedicated VM server</strong> that you manage from any web browser on your network. It's like converting an old laptop into a professional data center — for free!
+        </div>
+
+        <div class="engine-card">
+            <span class="engine-type">Why Proxmox over VirtualBox?</span>
+            <table>
+                <thead><tr><th>Feature</th><th>VirtualBox (Type 2)</th><th>Proxmox (Type 1)</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Runs on</strong></td><td>Inside your Windows/Mac/Linux OS</td><td>Replaces the OS entirely — IS the OS</td></tr>
+                    <tr><td><strong>Performance</strong></td><td>Good for learning (some overhead)</td><td>Near-native speed (no host OS overhead)</td></tr>
+                    <tr><td><strong>Management</strong></td><td>Desktop GUI app</td><td>Web-based dashboard (access from any device!)</td></tr>
+                    <tr><td><strong>Best for</strong></td><td>Running 1-2 VMs on your daily driver</td><td>Running 5-20+ VMs on a dedicated machine</td></tr>
+                    <tr><td><strong>Price</strong></td><td>Free</td><td>Free (community edition)</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="proxmox-install">
+        <h3>Installing Proxmox: Step-by-Step</h3>
+        <div class="engine-card">
+            <h4>Prerequisites</h4>
+            <ul>
+                <li>A spare computer (even an old laptop works!)</li>
+                <li>A USB flash drive (8 GB minimum)</li>
+                <li>An Ethernet cable (Proxmox generally doesn't work with Wi-Fi during install)</li>
+                <li>CPU Virtualization enabled in BIOS (Intel VT-x / AMD-V)</li>
+            </ul>
+
+            <h4>Installation Steps</h4>
+            <div class="step-box"><span class="step-num">1</span><div class="step-content"><strong>Download Proxmox ISO</strong> from <code>proxmox.com/en/downloads</code> — get the "Proxmox VE ISO Installer".</div></div>
+            <div class="step-box"><span class="step-num">2</span><div class="step-content"><strong>Create a bootable USB</strong> using <strong>Rufus</strong> (Windows) or <strong>Ventoy</strong> (any OS). Select the Proxmox ISO and flash it to the USB drive.</div></div>
+            <div class="step-box"><span class="step-num">3</span><div class="step-content"><strong>Boot from USB</strong> → Select "Install Proxmox VE" from the boot menu.</div></div>
+            <div class="step-box"><span class="step-num">4</span><div class="step-content"><strong>Accept EULA</strong> → Select target hard disk → Configure country/timezone/keyboard.</div></div>
+            <div class="step-box"><span class="step-num">5</span><div class="step-content"><strong>Set root password and email</strong> — this is your admin login for the web interface.</div></div>
+            <div class="step-box"><span class="step-num">6</span><div class="step-content"><strong>Configure networking</strong> — assign a <strong>static IP address</strong>, gateway, and DNS. Proxmox does NOT work well with DHCP. Example: IP <code>192.168.1.100</code>, Gateway <code>192.168.1.1</code>.</div></div>
+            <div class="step-box"><span class="step-num">7</span><div class="step-content"><strong>Complete install, remove USB, reboot</strong>.</div></div>
+            <div class="step-box"><span class="step-num">8</span><div class="step-content"><strong>Access the web UI</strong> from any browser: <code>https://YOUR_IP:8006</code>. Login with username <code>root</code> and your password.</div></div>
+        </div>
+
+        <div class="callout callout-warn">
+            <span class="callout-title">⚠️ Important Post-Install Step</span>
+            After first login, <strong>disable the enterprise repository</strong> (which requires a paid subscription) and <strong>add the no-subscription repository</strong>. Then update the server. Without this, you won't be able to install/update packages.
+        </div>
+    </section>
+
+    <section id="proxmox-kali">
+        <h3>Setting Up Kali Linux VM in Proxmox</h3>
+        <div class="engine-card">
+            <div class="step-box"><span class="step-num">1</span><div class="step-content"><strong>Download Kali Linux ISO</strong> from <code>kali.org</code> — get the <strong>bare-metal installer</strong> (64-bit), NOT the pre-built VM images (those are for VirtualBox/VMware).</div></div>
+            <div class="step-box"><span class="step-num">2</span><div class="step-content"><strong>Verify SHA256 checksum</strong> to ensure the download isn't corrupted or tampered with.</div></div>
+            <div class="step-box"><span class="step-num">3</span><div class="step-content"><strong>Upload ISO to Proxmox</strong>: In web UI → Local storage → ISO Images → Upload.</div></div>
+            <div class="step-box"><span class="step-num">4</span><div class="step-content"><strong>Create VM</strong>: Click "Create VM" → Name it → Select uploaded Kali ISO → Allocate storage (50-100 GB), CPU cores (2-4), and RAM (4-8 GB).</div></div>
+            <div class="step-box"><span class="step-num">5</span><div class="step-content"><strong>Start VM and install Kali</strong> — follow the graphical installer for language, user, disk partitioning.</div></div>
+            <div class="step-box"><span class="step-num">6</span><div class="step-content"><strong>Optional: Set up XRDP</strong> for remote desktop access from other machines — better experience than Proxmox's built-in console.</div></div>
+        </div>
+
+        <div class="callout callout-green">
+            <span class="callout-title">💡 Pro Tip from NetworkChuck</span>
+            The "complete offline" Kali installer includes <strong>hundreds of pre-installed hacking tools</strong> (Nmap, Burp Suite, Wireshark, Metasploit, etc.). Choose this if you want everything ready out of the box. The smaller "net installer" downloads tools on-demand.
+        </div>
+    </section>
+
+    <!-- ========== VIDEO 3: DOCKER ========== -->
+    <section id="docker-problem">
+        <h2>Video 3: Docker Containers 101</h2>
+        <a class="video-link" href="https://www.youtube.com/watch?v=eGz9DS-aIeY" target="_blank">▶ NetworkChuck — you need to learn Docker RIGHT NOW!!</a>
+
+        <h3>The Problem Docker Solves</h3>
+        <div class="callout">
+            <span class="callout-title">😤 The "It Works On My Machine" Problem</span>
+            You write a Python app on your laptop. It works perfectly. You send it to your colleague — it crashes. Why? Different Python version, missing libraries, wrong OS settings. Docker eliminates this entirely by packaging your app + ALL its dependencies into a single, portable container.
+        </div>
+
+        <div class="engine-card">
+            <span class="engine-type">The Old Way (VMs) vs The Docker Way</span>
+            <p>We learned that VMs solved the "one server, one app" problem. But VMs have a <strong>massive drawback</strong>:</p>
+            <ul>
+                <li>Each VM needs a <strong>full Guest OS</strong> (2-10 GB in size)</li>
+                <li>VMs take <strong>minutes to boot</strong></li>
+                <li>Running 10 VMs = 10 copies of an operating system = huge waste of resources</li>
+                <li>Resources allocated to a VM are <strong>reserved even when idle</strong> — if you give a VM 8 GB RAM, that 8 GB is locked away even if the app uses only 500 MB</li>
+            </ul>
+            <p><strong>Docker's insight:</strong> What if we could get the isolation benefits of VMs <em>without</em> the weight of a full OS?</p>
+        </div>
+    </section>
+
+    <section id="docker-vm-vs-container">
+        <h3>VMs vs Containers: The Critical Difference</h3>
+
+        <div class="engine-card">
+            <span class="engine-type">What Gets Virtualized</span>
+            <table>
+                <thead><tr><th>Aspect</th><th>Virtual Machine</th><th>Docker Container</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Virtualizes</strong></td><td>The entire <strong>hardware</strong></td><td>Only the <strong>operating system</strong></td></tr>
+                    <tr><td><strong>OS</strong></td><td>Each VM has a <strong>full Guest OS</strong></td><td>Containers <strong>share the host's OS kernel</strong></td></tr>
+                    <tr><td><strong>Size</strong></td><td>Gigabytes (2-10 GB per VM)</td><td>Megabytes (50-200 MB per container)</td></tr>
+                    <tr><td><strong>Boot time</strong></td><td>Minutes</td><td><strong>Under 1 second</strong></td></tr>
+                    <tr><td><strong>Isolation</strong></td><td>Complete (own OS, own kernel)</td><td>Process-level (shared kernel, separate filesystem)</td></tr>
+                    <tr><td><strong>Resource usage</strong></td><td>Reserved upfront (wastes idle resources)</td><td>Uses only what it needs</td></tr>
+                    <tr><td><strong>Best for</strong></td><td>Running different OS types, full isolation</td><td>Running many instances of same-OS apps efficiently</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="callout callout-green">
+            <span class="callout-title">🔑 The Key Insight (Explained Deeply)</span>
+            <p><strong>VMs virtualize hardware</strong> — each VM gets a fake CPU, fake RAM, fake disk. The hypervisor translates fake hardware calls to real hardware. Because each VM has its own OS kernel, a Linux VM can run on a Windows host.</p>
+            <p><strong>Containers virtualize the OS</strong> — all containers on a machine share the <strong>same OS kernel</strong> (the core of the operating system). Each container gets its own isolated filesystem, processes, and network — but they all use the host's kernel to talk to hardware. This is why containers are so much lighter and faster.</p>
+            <p><strong>Trade-off:</strong> A Linux container can only run on a Linux host (same kernel). If you need to run Windows apps on a Linux server, you still need a VM.</p>
+        </div>
+    </section>
+
+    <section id="docker-vocab">
+        <h3>Docker's Core Vocabulary</h3>
+        <div class="engine-card">
+            <span class="engine-type">The 4 Terms You Must Know</span>
+            <table>
+                <thead><tr><th>Term</th><th>What It Is</th><th>Analogy</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Dockerfile</strong></td>
+                        <td>A text file with step-by-step instructions to build an image. It's code that describes your app's environment.</td>
+                        <td>A <strong>recipe</strong> — lists every ingredient and cooking step</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Docker Image</strong></td>
+                        <td>A read-only template built from the Dockerfile. Contains your code + all dependencies + config. Immutable.</td>
+                        <td>A <strong>frozen meal</strong> packaged from the recipe — ready to heat and serve</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Docker Container</strong></td>
+                        <td>A <strong>running instance</strong> of an Image. This is your live application. You can run many containers from one image.</td>
+                        <td>The <strong>meal being served</strong> — you can serve 100 plates from one recipe</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Docker Hub</strong></td>
+                        <td>An online registry where people share pre-built images (like GitHub for Docker images).</td>
+                        <td>A <strong>recipe book library</strong> — download tested recipes for free</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="engine-card">
+            <h4>Example Dockerfile Explained Line by Line</h4>
+<pre><code><span style="color:#94a3b8;"># Start from an official Python base image (pre-built by Docker Hub)</span>
+FROM python:3.11-slim
+
+<span style="color:#94a3b8;"># Set /app as the working directory inside the container</span>
+WORKDIR /app
+
+<span style="color:#94a3b8;"># Copy all files from your project folder into the container</span>
+COPY . .
+
+<span style="color:#94a3b8;"># Install Python packages listed in requirements.txt</span>
+RUN pip install -r requirements.txt
+
+<span style="color:#94a3b8;"># When the container starts, run this command</span>
+CMD ["python", "app.py"]</code></pre>
+            <p>This Dockerfile says: <em>"Take a clean Python 3.11 environment, put my code in it, install my dependencies, and run my app."</em> The resulting container will run <strong>identically</strong> on ANY machine with Docker installed — your laptop, your colleague's Mac, or a server in Singapore.</p>
+        </div>
+    </section>
+
+    <section id="docker-commands">
+        <h3>Essential Docker Commands</h3>
+        <div class="engine-card">
+<pre><code><span style="color:#94a3b8;"># Pull an image from Docker Hub</span>
+docker pull centos
+
+<span style="color:#94a3b8;"># Run a container from an image (interactive terminal)</span>
+docker run -it centos bash
+
+<span style="color:#94a3b8;"># List all running containers</span>
+docker ps
+
+<span style="color:#94a3b8;"># List ALL containers (including stopped ones)</span>
+docker ps -a
+
+<span style="color:#94a3b8;"># Connect to a running container</span>
+docker exec -it &lt;container_id&gt; bash
+
+<span style="color:#94a3b8;"># Build an image from a Dockerfile</span>
+docker build -t my-app .
+
+<span style="color:#94a3b8;"># Run a container in detached (background) mode</span>
+docker run -d -p 8080:80 my-app
+
+<span style="color:#94a3b8;"># Stop a container</span>
+docker stop &lt;container_id&gt;
+
+<span style="color:#94a3b8;"># Remove a container</span>
+docker rm &lt;container_id&gt;</code></pre>
+        </div>
+
+        <div class="callout">
+            <span class="callout-title">🌐 Docker Networking Basics</span>
+            <p>Each container gets its <strong>own IP address</strong>. Containers can communicate with each other. Docker uses a <strong>"bridge" network</strong> by default — all containers on the same bridge can talk to each other, but are isolated from outside traffic unless you explicitly expose ports with <code>-p</code>.</p>
+        </div>
+    </section>
+
+    <!-- ========== VIDEO 4: KUBERNETES ========== -->
+    <section id="k8s-why">
+        <h2>Video 4: Kubernetes (K8s)</h2>
+        <a class="video-link" href="https://www.youtube.com/watch?v=7bA0gTroJjw" target="_blank">▶ NetworkChuck — you need to learn Kubernetes RIGHT NOW!!</a>
+
+        <h3>Why Do We Need Kubernetes?</h3>
+        <div class="callout">
+            <span class="callout-title">📦 The Problem with Docker Alone</span>
+            Docker is amazing for running <strong>one container on one machine</strong>. But what happens when:
+            <ul>
+                <li>Your app gets popular and you need <strong>50 containers</strong> across <strong>10 servers</strong>?</li>
+                <li>A container <strong>crashes at 3 AM</strong> — who restarts it?</li>
+                <li>You need to push a <strong>new version</strong> without downtime?</li>
+                <li>Traffic spikes during a sale — you need to <strong>auto-scale</strong> from 5 to 50 containers?</li>
+            </ul>
+            Managing this manually is impossible. <strong>Kubernetes automates all of it.</strong>
+        </div>
+
+        <div class="engine-card">
+            <span class="engine-type">Simple Analogy</span>
+            <h4>🎼 The Orchestra Conductor</h4>
+            <p>Docker containers are individual <strong>musicians</strong>. Each can play beautifully on their own. But with 200 musicians, you need a <strong>conductor</strong> to coordinate them — telling each one when to play, adjusting volume, replacing anyone who faints, and adding more musicians if the concert hall fills up. <strong>Kubernetes is that conductor.</strong></p>
+        </div>
+
+        <div class="callout callout-green">
+            <span class="callout-title">🎯 Key Takeaway</span>
+            <strong>Docker = running containers. Kubernetes = managing containers at scale.</strong> Docker handles the "what" (package and run an app). Kubernetes handles the "where, when, and how many" (deploy, scale, and heal across many machines).
+        </div>
+    </section>
+
+    <section id="k8s-arch">
+        <h3>Kubernetes Architecture</h3>
+        <div class="engine-card">
+            <span class="engine-type">The Two Types of Machines in K8s</span>
+
+            <div class="comparison-grid">
+                <div class="engine-card" style="border-color: var(--primary);">
+                    <h4>Master Node (Control Plane) 🧠</h4>
+                    <p>The "brain" of the cluster. It makes all the decisions but <strong>never runs your actual app containers</strong>.</p>
+                    <ul>
+                        <li><strong>API Server:</strong> The "front door" — all commands go through here (from you or from kubectl)</li>
+                        <li><strong>etcd:</strong> A database that stores the <em>desired state</em> of the entire cluster (how many containers, which images, etc.)</li>
+                        <li><strong>Scheduler:</strong> Decides <em>which worker node</em> should run a new container (based on available resources)</li>
+                        <li><strong>Controller Manager:</strong> Constantly watches the cluster. If a container dies, it notices and tells the scheduler to create a replacement</li>
+                    </ul>
+                </div>
+                <div class="engine-card" style="border-color: var(--secondary);">
+                    <h4>Worker Nodes (The Muscle) 💪</h4>
+                    <p>These are the machines that actually <strong>run your containers</strong>. A cluster can have dozens or hundreds of worker nodes.</p>
+                    <ul>
+                        <li><strong>kubelet:</strong> An agent running on each worker that receives instructions from the master and ensures containers are running correctly</li>
+                        <li><strong>Container Runtime:</strong> The software that actually runs containers (usually Docker or containerd)</li>
+                        <li><strong>kube-proxy:</strong> Manages networking — ensures containers can communicate with each other and with the outside world</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="k8s-concepts">
+        <h3>Core Kubernetes Concepts</h3>
+
+        <div class="engine-card">
+            <h4>1. Pod — The Smallest Unit</h4>
+            <div class="callout">
+                <span class="callout-title">What is a Pod?</span>
+                A Pod is a <strong>wrapper around one or more containers</strong>. It's the smallest thing Kubernetes manages. In most cases, 1 Pod = 1 Container. Think of a Pod as a <strong>cubicle</strong> in an office — it holds one worker (container) and gives them a desk, phone, and network connection.
+            </div>
+            <ul>
+                <li>Each Pod gets its own <strong>IP address</strong></li>
+                <li>Pods are <strong>ephemeral</strong> (temporary) — they can be created and destroyed at any time</li>
+                <li>If a Pod dies, Kubernetes creates a <strong>brand new Pod</strong> to replace it (not revive the old one)</li>
+            </ul>
+        </div>
+
+        <div class="engine-card">
+            <h4>2. Deployment — Managing Groups of Pods</h4>
+            <div class="callout callout-green">
+                <span class="callout-title">What is a Deployment?</span>
+                A Deployment tells Kubernetes: <em>"I want 3 copies of this Pod running at all times."</em> Kubernetes then ensures exactly 3 Pods are always alive. If one crashes, it automatically creates a replacement. If you want 10 instead, just update the number — K8s handles the rest.
+            </div>
+            <ul>
+                <li><strong>Scaling:</strong> Change <code>replicas: 3</code> to <code>replicas: 10</code> and K8s instantly creates 7 more Pods</li>
+                <li><strong>Rolling Updates:</strong> When you deploy a new version, K8s replaces Pods <strong>one at a time</strong>. Old Pod is killed only after the new one is healthy. Users experience <strong>zero downtime</strong>.</li>
+                <li><strong>Rollback:</strong> If the new version is broken, K8s can instantly roll back to the previous version</li>
+            </ul>
+        </div>
+
+        <div class="engine-card">
+            <h4>3. Service — Exposing Pods to the World</h4>
+            <div class="callout callout-warn">
+                <span class="callout-title">The Problem Services Solve</span>
+                Pods are temporary — they get created and destroyed, each time with a <strong>new IP address</strong>. How do users or other apps find them? A <strong>Service</strong> provides a <strong>stable, permanent IP/DNS name</strong> that always routes to healthy Pods, no matter how many come and go.
+            </div>
+            <ul>
+                <li><strong>ClusterIP:</strong> Internal access only — for communication between microservices inside the cluster</li>
+                <li><strong>NodePort:</strong> Opens a port on every worker node — basic external access</li>
+                <li><strong>LoadBalancer:</strong> Creates an external cloud load balancer that distributes traffic across all Pods — <strong>this is what you use for production websites</strong></li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="k8s-commands">
+        <h3>Essential kubectl Commands</h3>
+        <div class="engine-card">
+            <p><code>kubectl</code> (pronounced "kube-cuddle" or "kube-control") is the command-line tool for interacting with Kubernetes:</p>
+<pre><code><span style="color:#94a3b8;"># Check cluster connectivity and see all nodes</span>
+kubectl get nodes
+
+<span style="color:#94a3b8;"># Create resources from a YAML file</span>
+kubectl apply -f deployment.yaml
+
+<span style="color:#94a3b8;"># List all pods in the default namespace</span>
+kubectl get pods
+
+<span style="color:#94a3b8;"># Get detailed info about a pod</span>
+kubectl describe pod &lt;pod-name&gt;
+
+<span style="color:#94a3b8;"># Scale a deployment (change number of replicas)</span>
+kubectl scale deployment my-app --replicas=5
+
+<span style="color:#94a3b8;"># Watch pods in real-time</span>
+kubectl get pods -w
+
+<span style="color:#94a3b8;"># Expose a deployment as a LoadBalancer service</span>
+kubectl expose deployment my-app --type=LoadBalancer --port=80
+
+<span style="color:#94a3b8;"># Delete a pod (K8s will auto-create a replacement!)</span>
+kubectl delete pod &lt;pod-name&gt;
+
+<span style="color:#94a3b8;"># View logs from a pod</span>
+kubectl logs &lt;pod-name&gt;</code></pre>
+        </div>
+
+        <div class="engine-card">
+            <h4>Example: Deploying a Website with Kubernetes (YAML)</h4>
+<pre><code><span style="color:#94a3b8;"># deployment.yaml</span>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coffee-website
+spec:
+  replicas: 3          <span style="color:#94a3b8;"># Run 3 identical copies</span>
+  selector:
+    matchLabels:
+      app: coffee
+  template:
+    metadata:
+      labels:
+        app: coffee
+    spec:
+      containers:
+      - name: coffee-container
+        image: nginx    <span style="color:#94a3b8;"># Use the Nginx web server image</span>
+        ports:
+        - containerPort: 80</code></pre>
+            <p>This YAML tells Kubernetes: <em>"Always keep 3 Pods running the Nginx web server. If any die, replace them automatically."</em></p>
+        </div>
+    </section>
+
+    <!-- ========== SUMMARY ========== -->
+    <section id="summary">
+        <h2>The Complete Picture: How Everything Connects</h2>
+        <div class="engine-card">
+            <span class="engine-type">From Physical to Orchestrated — The Evolution</span>
+            <table>
+                <thead><tr><th>Era</th><th>Technology</th><th>What Changed</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>1990s</strong></td><td>Physical Servers</td><td>1 app = 1 physical machine. Expensive, wasteful, slow to set up.</td></tr>
+                    <tr><td><strong>2000s</strong></td><td>Virtual Machines</td><td>1 physical machine = many VMs. Better utilization. But each VM carries a full OS (heavy).</td></tr>
+                    <tr><td><strong>2013</strong></td><td>Docker Containers</td><td>Share one OS kernel. Lightweight (MBs not GBs). Start in seconds. Portable.</td></tr>
+                    <tr><td><strong>2014+</strong></td><td>Kubernetes</td><td>Automates container deployment, scaling, healing, and updates across hundreds of machines.</td></tr>
+                </tbody>
+            </table>
+
+            <div class="callout callout-green">
+                <span class="callout-title">🎯 The One-Line Summary</span>
+                <strong>VMs</strong> let you run multiple OS on one machine. <strong>Docker</strong> lets you package and run apps without carrying an OS. <strong>Kubernetes</strong> lets you manage thousands of Docker containers automatically. <strong>Proxmox</strong> is a free tool to run VMs professionally using a Type 1 hypervisor.
+            </div>
+        </div>
+    </section>
+
+    <footer style="margin-top: 6rem; padding: 3rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted);">
+        <p>📹 Notes compiled from NetworkChuck videos | Created for Sharvari's Learning Path | 2026</p>
+    </footer>
+</main>
+
+<script>
+    const sections = document.querySelectorAll("section, header");
+    const navLinks = document.querySelectorAll("aside ul li a");
+    window.addEventListener("scroll", () => {
+        let current = "";
+        sections.forEach((sec) => {
+            if (pageYOffset >= sec.offsetTop - 60) current = sec.getAttribute("id");
+        });
+        navLinks.forEach((link) => {
+            link.classList.remove("active");
+            if (link.getAttribute("href").includes(current)) link.classList.add("active");
+        });
+    });
+</script>
+</body>
+</html>
